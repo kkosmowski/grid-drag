@@ -1,7 +1,7 @@
+import { Grid } from '~/components/Grid';
+
 export const App = () => {
   return (
-    <main>
-      App
-    </main>
+    <Grid />
   )
 }
