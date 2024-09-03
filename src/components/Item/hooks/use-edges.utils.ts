@@ -1,18 +1,18 @@
 import type { CornerCursor, EdgeCursor, ItemCorners, ItemEdges } from '~/types/item';
 
 
-export const getCornerCursor = ({isLeftTopCorner, isLeftBottomCorner, isRightTopCorner, isRightBottomCorner }: ItemCorners): CornerCursor | null => {
-  if (isLeftTopCorner) return 'nw-resize';
-  if (isLeftBottomCorner) return 'sw-resize';
-  if (isRightTopCorner) return 'ne-resize';
-  if (isRightBottomCorner) return 'se-resize';
+export const getCornerCursor = ({ isLTC, isLBC, isRTC, isRBC }: ItemCorners): CornerCursor | null => {
+  if (isLTC) return 'nw-resize';
+  if (isLBC) return 'sw-resize';
+  if (isRTC) return 'ne-resize';
+  if (isRBC) return 'se-resize';
   return null;
 }
 
-export const getEdgeCursor = ({isLeftEdge, isRightEdge, isTopEdge, isBottomEdge }: ItemEdges): EdgeCursor | null => {
-  if (isLeftEdge) return 'w-resize';
-  if (isRightEdge) return 'e-resize';
-  if (isTopEdge) return 'n-resize';
-  if (isBottomEdge) return 's-resize';
+export const getEdgeCursor = ({ isLE, isRE, isTE, isBE }: ItemEdges): EdgeCursor | null => {
+  if (isLE) return 'w-resize';
+  if (isRE) return 'e-resize';
+  if (isTE) return 'n-resize';
+  if (isBE) return 's-resize';
   return null;
 }

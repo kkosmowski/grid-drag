@@ -44,6 +44,7 @@ export  const useMove = ({ ref, item, cursor, onMove }: UseMoveProps) => {
 
       if (ref.current) {
         setStyleProp(ref, '--shadow', '0 0 8px 1px #0004');
+        setStyle(ref, 'z-index', '10000');
         setStyle(ref, 'cursor', 'move');
       }
     }, 250);
@@ -66,6 +67,7 @@ export  const useMove = ({ ref, item, cursor, onMove }: UseMoveProps) => {
 
     if (ref.current) {
       setStyleProp(ref, '--shadow', 'none');
+      setStyle(ref, 'z-index', '');
       setStyle(ref, 'cursor', '');
     }
   };

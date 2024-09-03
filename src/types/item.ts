@@ -1,10 +1,13 @@
 import { MutableRefObject } from 'react';
 
-export type Rectangle = Position & {
+export type Rectangle = Size & Position & {
   id: string;
+  color: string;
+}
+
+export type Size = {
   width: number;
   height: number;
-  color: string;
 }
 
 export type Position = {
@@ -12,18 +15,20 @@ export type Position = {
   y: number;
 }
 
+export type ResizeData = Size & Position;
+
 export type ItemCorners = {
-  isLeftTopCorner: boolean;
-  isLeftBottomCorner: boolean;
-  isRightTopCorner: boolean;
-  isRightBottomCorner: boolean;
+  isLTC: boolean;
+  isLBC: boolean;
+  isRTC: boolean;
+  isRBC: boolean;
 }
 
 export type ItemEdges = {
-  isLeftEdge: boolean;
-  isRightEdge: boolean;
-  isTopEdge: boolean;
-  isBottomEdge: boolean;
+  isLE: boolean;
+  isRE: boolean;
+  isTE: boolean;
+  isBE: boolean;
 }
 
 export type CornerCursor = 'nw-resize' | 'sw-resize' | 'ne-resize' | 'se-resize';

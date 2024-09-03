@@ -2,6 +2,5 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-    background-size: 10px 10px;
     background-image: linear-gradient(to right, #eee 1px, transparent 1px), linear-gradient(to bottom, #eee 1px, transparent 1px);
 }
