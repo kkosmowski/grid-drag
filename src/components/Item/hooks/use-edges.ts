@@ -8,6 +8,8 @@ import { setStyle } from '~/utils/set-style.ts';
 
 const edgeSize = 8;
 
+// This hook is responsible for listening to mouse on edges and handling correct cursor.
+// This cursor is later provided to the component to make decisions such as whether to resize or move.
 export const useEdges = (ref: ItemRef, item: Rectangle) => {
   const [cursor, setCursor] = useState<Cursor | null>(null);
 
@@ -25,8 +27,8 @@ export const useEdges = (ref: ItemRef, item: Rectangle) => {
     setCursor(newCursor);
 
     if (ref.current) {
-      // change cursor only if unset, otherwise it means it is being dragged
-      if (ref.current!.style.cursor === '') {
+      // change cursor only it's not set to "move", otherwise it means it is being dragged
+      if (ref.current!.style.cursor !== 'move') {
         setStyle(ref, 'cursor', newCursor ?? '');
       }
     }

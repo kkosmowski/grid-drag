@@ -1,7 +1,7 @@
 import { Cursor, ItemRef, Position, Rectangle } from '~/types/item';
-import { MutableRefObject, useEffect, useRef } from 'react';
-import { setStyle } from '~/utils/set-style.ts';
-import { setStyleProp } from '~/utils/set-style-prop.ts';
+import { useEffect, useRef } from 'react';
+import { setStyle } from '~/utils/set-style';
+import { setStyleProp } from '~/utils/set-style-prop';
 
 type UseMoveProps = {
   ref: ItemRef;
@@ -13,7 +13,6 @@ type UseMoveProps = {
 const defaultInnerPosition: Position = { x: 0, y: 0 };
 
 export  const useMove = ({ ref, item, cursor, onMove }: UseMoveProps) => {
-  if (item.id === '2') console.log('use move', item);
   const canBeMoved = cursor === null;
   const isDragging = useRef(false);
   const innerPosition = useRef<Position>(defaultInnerPosition);
@@ -38,7 +37,6 @@ export  const useMove = ({ ref, item, cursor, onMove }: UseMoveProps) => {
 
     clickTimeout.current = setTimeout(() => {
       isDragging.current = true;
-      console.log(item.x, item.y);
       innerPosition.current = {
         x: clientX - item.x,
         y: clientY - item.y,
@@ -68,6 +66,7 @@ export  const useMove = ({ ref, item, cursor, onMove }: UseMoveProps) => {
 
     if (ref.current) {
       setStyleProp(ref, '--shadow', 'none');
+      setStyle(ref, 'cursor', '');
     }
   };
 
