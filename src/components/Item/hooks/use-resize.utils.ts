@@ -1,4 +1,5 @@
 import { CornerCursor, Cursor, EdgeCursor, Rectangle, ResizeData } from '~/types/item';
+import { MIN_SIZE } from '~/consts.ts';
 
 type CreateResizeMapArgs = {
   item: Rectangle;
@@ -7,6 +8,11 @@ type CreateResizeMapArgs = {
 }
 
 type ResizeMap = Record<Cursor, { pending: ResizeData, done: ResizeData }>;
+
+
+// @todo: make it work for top left corner
+// @todo: make it work for bottom left corner
+// @todo: make it work for edges only
 export const createResizeMap = ({ item, clientX, clientY }: CreateResizeMapArgs): ResizeMap => ({
   [CornerCursor.LeftTop]: {
     pending: {
@@ -39,15 +45,15 @@ export const createResizeMap = ({ item, clientX, clientY }: CreateResizeMapArgs)
   [CornerCursor.RightTop]: {
     pending: {
       x: 0,
-      y: 0,
-      width: item.width,
-      height: item.height,
+      y: Math.min(clientY - item.y, item.height - MIN_SIZE),
+      width: Math.max(clientX - item.x, MIN_SIZE),
+      height: Math.max(item.height - clientY + item.y, MIN_SIZE),
     },
     done: {
       x: item.x,
-      y: item.y,
-      width: item.width,
-      height: item.height,
+      y: item.y + Math.min(clientY - item.y, item.height - MIN_SIZE),
+      width: Math.max(clientX - item.x, MIN_SIZE),
+      height: Math.max(item.height - clientY + item.y, MIN_SIZE),
     },
   },
   [CornerCursor.RightBottom]: {
