@@ -1,4 +1,7 @@
 .item {
+    --shadow: none;
     position: absolute;
     border-radius: 5px;
+    cursor: move;
+    box-shadow: var(--shadow);
 }
