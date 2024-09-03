@@ -1,7 +1,25 @@
 .item {
-    --shadow: none;
+    --resize: none;
+    --resize-x: 0px;
+    --resize-y: 0px;
+    --resize-width: 0px;
+    --resize-height: 0px;
+    --color: none;
     position: absolute;
     border-radius: 5px;
     cursor: move;
     box-shadow: var(--shadow);
+    background-color: var(--color);
+}
+
+.item::after {
+    content: '';
+    display: var(--resize);
+    position: absolute;
+    top: var(--resize-y);
+    left: var(--resize-x);
+    width: var(--resize-width);
+    height: var(--resize-height);
+    border-radius: 5px;
+    border: 1px dashed #999;
 }

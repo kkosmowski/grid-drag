@@ -1,46 +1,42 @@
-import { MouseEvent, useState, useEffect } from 'react';
+import { MouseEvent, useState, useEffect, MutableRefObject } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { Cursor, ItemCorners, ItemEdges, ItemRef, Rectangle } from '~/types/item';
 
 import { getCornerCursor, getEdgeCursor } from './use-edges.utils';
-import { setStyle } from '~/utils/set-style.ts';
-
-const edgeSize = 8;
+import { setStyle } from '~/utils/set-style';
+import { isBottomEdge, isLeftEdge, isRightEdge, isTopEdge } from '~/utils/edges-and-corners';
 
 // This hook is responsible for listening to mouse on edges and handling correct cursor.
 // This cursor is later provided to the component to make decisions such as whether to resize or move.
-export const useEdges = (ref: ItemRef, item: Rectangle) => {
+export const useEdges = (ref: ItemRef, item: Rectangle, freezeCursor: MutableRefObject<boolean>) => {
   const [cursor, setCursor] = useState<Cursor | null>(null);
 
   const handleEdgeHover = (edges: ItemEdges) => {
-    const { isLeftEdge, isRightEdge, isTopEdge, isBottomEdge} = edges;
+    const { isLE, isBE, isTE, isRE } = edges;
 
-    const isLeftTopCorner = isLeftEdge && isTopEdge;
-    const isLeftBottomCorner = isLeftEdge && isBottomEdge;
-    const isRightTopCorner = isRightEdge && isTopEdge;
-    const isRightBottomCorner = isRightEdge && isBottomEdge;
+    const isLTC = isLE && isTE;
+    const isLBC = isLE && isBE;
+    const isRTC = isRE && isTE;
+    const isRBC = isRE && isBE;
 
-    const corners: ItemCorners = { isLeftTopCorner, isLeftBottomCorner, isRightTopCorner, isRightBottomCorner };
+    const corners: ItemCorners = { isLTC, isLBC, isRTC, isRBC };
 
     const newCursor: Cursor | null = getCornerCursor(corners) ?? getEdgeCursor(edges);
-    setCursor(newCursor);
 
-    if (ref.current) {
-      // change cursor only it's not set to "move", otherwise it means it is being dragged
-      if (ref.current!.style.cursor !== 'move') {
-        setStyle(ref, 'cursor', newCursor ?? '');
-      }
+    if (ref.current && !freezeCursor.current) {
+      setCursor(newCursor);
+      setStyle(ref, 'cursor', newCursor ?? '');
     }
   }
 
   const edgeListener = useDebouncedCallback(({ clientX, clientY }: MouseEvent<HTMLDivElement>) => {
-    const isLeftEdge = clientX < item.x + edgeSize;
-    const isRightEdge = clientX > item.x + item.width - edgeSize;
-    const isTopEdge = clientY < item.y + edgeSize;
-    const isBottomEdge = clientY > item.y + item.height - edgeSize;
+    const isLE = isLeftEdge(clientX, item);
+    const isRE = isRightEdge(clientX, item);
+    const isTE = isTopEdge(clientY, item);
+    const isBE = isBottomEdge(clientY, item);
 
-    handleEdgeHover({ isLeftEdge, isRightEdge, isTopEdge, isBottomEdge});
+    handleEdgeHover({ isLE, isRE, isTE, isBE });
   }, 10);
 
   useEffect(() => {
