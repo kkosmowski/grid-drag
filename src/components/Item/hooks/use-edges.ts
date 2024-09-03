@@ -1,15 +1,15 @@
-import { MouseEvent, useState, useEffect } from 'react';
+import { MouseEvent, useState, useEffect, MutableRefObject } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { Cursor, ItemCorners, ItemEdges, ItemRef, Rectangle } from '~/types/item';
 
 import { getCornerCursor, getEdgeCursor } from './use-edges.utils';
 import { setStyle } from '~/utils/set-style';
-import { isBottomEdge, isLeftEdge, isRightEdge, isTopEdge } from '~/utils/edges-and-corners.ts';
+import { isBottomEdge, isLeftEdge, isRightEdge, isTopEdge } from '~/utils/edges-and-corners';
 
 // This hook is responsible for listening to mouse on edges and handling correct cursor.
 // This cursor is later provided to the component to make decisions such as whether to resize or move.
-export const useEdges = (ref: ItemRef, item: Rectangle) => {
+export const useEdges = (ref: ItemRef, item: Rectangle, freezeCursor: MutableRefObject<boolean>) => {
   const [cursor, setCursor] = useState<Cursor | null>(null);
 
   const handleEdgeHover = (edges: ItemEdges) => {
@@ -24,12 +24,9 @@ export const useEdges = (ref: ItemRef, item: Rectangle) => {
 
     const newCursor: Cursor | null = getCornerCursor(corners) ?? getEdgeCursor(edges);
 
-    if (ref.current) {
-      // change cursor only it's not set to "move", otherwise it means it is being dragged
-      if (ref.current!.style.cursor !== 'move') {
-        setCursor(newCursor);
-        setStyle(ref, 'cursor', newCursor ?? '');
-      }
+    if (ref.current && !freezeCursor.current) {
+      setCursor(newCursor);
+      setStyle(ref, 'cursor', newCursor ?? '');
     }
   }
 

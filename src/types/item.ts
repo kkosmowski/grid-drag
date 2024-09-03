@@ -31,8 +31,20 @@ export type ItemEdges = {
   isBE: boolean;
 }
 
-export type CornerCursor = 'nw-resize' | 'sw-resize' | 'ne-resize' | 'se-resize';
-export type EdgeCursor = 'n-resize' | 's-resize' | 'w-resize' | 'e-resize';
+export enum CornerCursor {
+  LeftTop = 'nw-resize',
+  LeftBottom = 'sw-resize',
+  RightTop = 'ne-resize',
+  RightBottom = 'se-resize',
+}
+
+export enum EdgeCursor {
+  Left = 'w-resize',
+  Right = 'e-resize',
+  Top = 'n-resize',
+  Bottom = 's-resize',
+}
+
 export type Cursor = CornerCursor | EdgeCursor;
 
 export type ItemRef = MutableRefObject<HTMLDivElement | null>;

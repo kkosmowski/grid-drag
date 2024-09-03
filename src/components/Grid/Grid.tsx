@@ -16,10 +16,10 @@ const itemsMock: Rectangle[] = [
   },
   {
     id: '2',
-    x: 240,
-    y: 190,
-    width: 70,
-    height: 110,
+    x: 340,
+    y: 290,
+    width: 170,
+    height: 210,
     color: '#a8dfa1',
   },
   {

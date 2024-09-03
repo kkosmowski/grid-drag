@@ -7,12 +7,13 @@ type UseMoveProps = {
   ref: ItemRef;
   item: Rectangle;
   cursor: Cursor | null;
+  onStart: VoidFunction;
   onMove: (id: string, pos: Position) => void;
 }
 
 const defaultInnerPosition: Position = { x: 0, y: 0 };
 
-export  const useMove = ({ ref, item, cursor, onMove }: UseMoveProps) => {
+export  const useMove = ({ ref, item, cursor, onStart, onMove }: UseMoveProps) => {
   const canBeMoved = cursor === null;
   const isDragging = useRef(false);
   const innerPosition = useRef<Position>(defaultInnerPosition);
@@ -36,6 +37,7 @@ export  const useMove = ({ ref, item, cursor, onMove }: UseMoveProps) => {
     }
 
     clickTimeout.current = setTimeout(() => {
+      onStart();
       isDragging.current = true;
       innerPosition.current = {
         x: clientX - item.x,
@@ -62,14 +64,14 @@ export  const useMove = ({ ref, item, cursor, onMove }: UseMoveProps) => {
         x: clientX - innerPosition.current.x,
         y: clientY - innerPosition.current.y,
       });
+
+      if (ref.current) {
+        setStyleProp(ref, '--shadow', 'none');
+        setStyle(ref, 'z-index', '');
+        setStyle(ref, 'cursor', '');
+      }
     }
     clear();
-
-    if (ref.current) {
-      setStyleProp(ref, '--shadow', 'none');
-      setStyle(ref, 'z-index', '');
-      setStyle(ref, 'cursor', '');
-    }
   };
 
   useEffect(() => {
