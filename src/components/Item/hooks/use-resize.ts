@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import { setStyleProp } from '~/utils/set-style-prop';
 import { setStyle } from '~/utils/set-style';
 import { createResizeMap } from '~/components/Item/hooks/use-resize.utils';
+import { HOLD_TIME_MS } from '~/consts.ts';
 
 type UseMoveProps = {
   ref: ItemRef;
@@ -12,9 +13,6 @@ type UseMoveProps = {
   onResize: (id: string, data: ResizeData) => void;
 }
 
-// @todo: fix a bug where holding mouse on edge and moving it into center toggles resize with cursor null/"move"
-//   a) possibly reducing the timeout can be valid solution
-//   b) otherwise need to clear timeout on cursor change (or maybe watch cursor in the useEffect?)
 export const useResize = ({ ref, item, cursor, onStart, onResize }: UseMoveProps) => {
   const canBeResized = cursor !== null;
   const isResizing = useRef(false);
@@ -30,6 +28,10 @@ export const useResize = ({ ref, item, cursor, onStart, onResize }: UseMoveProps
       clickTimeout.current = null;
     }
   }
+
+  useEffect(() => {
+    clear();
+  }, [cursor]);
 
   const setResize = ({ x, y, width, height }: ResizeData) => {
     setStyleProp(ref, '--resize-x', x + 'px');
@@ -56,7 +58,7 @@ export const useResize = ({ ref, item, cursor, onStart, onResize }: UseMoveProps
         setStyle(ref, 'z-index', '10000');
         setResize({ x: 0, y: 0, width, height });
       }
-    }, 250);
+    }, HOLD_TIME_MS);
   };
 
   const onResizeDrag = ({ clientX, clientY }: MouseEvent) => {

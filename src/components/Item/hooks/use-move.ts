@@ -2,6 +2,7 @@ import { Cursor, ItemRef, Position, Rectangle } from '~/types/item';
 import { useEffect, useRef } from 'react';
 import { setStyle } from '~/utils/set-style';
 import { setStyleProp } from '~/utils/set-style-prop';
+import { HOLD_TIME_MS } from '~/consts.ts';
 
 type UseMoveProps = {
   ref: ItemRef;
@@ -49,7 +50,7 @@ export  const useMove = ({ ref, item, cursor, onStart, onMove }: UseMoveProps) =
         setStyle(ref, 'z-index', '10000');
         setStyle(ref, 'cursor', 'move');
       }
-    }, 250);
+    }, HOLD_TIME_MS);
   };
 
   const onDrag = ({ clientX, clientY }: MouseEvent) => {
