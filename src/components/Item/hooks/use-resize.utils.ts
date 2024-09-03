@@ -7,130 +7,37 @@ type CreateResizeMapArgs = {
   clientY: number;
 }
 
-type ResizeMap = Record<Cursor, { pending: ResizeData, done: ResizeData }>;
+type ResizeMap = Record<Cursor, ResizeData>;
 
+type HorizontalResizeData = Pick<ResizeData, 'x' | 'width'>;
+type VerticalResizeData = Pick<ResizeData, 'y' | 'height'>;
 
-// @todo: make it work for edges only
 export const createResizeMap = ({ item, clientX, clientY }: CreateResizeMapArgs): ResizeMap => {
-  const limitX = Math.min(clientX - item.x, item.width - MIN_SIZE);
-  const limitY = Math.min(clientY - item.y, item.height - MIN_SIZE);
-  const limitWidthFromLeft = Math.max(item.width - clientX + item.x, MIN_SIZE);
-  const limitWidthFromRight = Math.max(clientX - item.x, MIN_SIZE);
-  const limitHeightFromTop = Math.max(item.height - clientY + item.y, MIN_SIZE);
-  const limitHeightFromBottom = Math.max(clientY - item.y, MIN_SIZE);
+  const leftX = Math.min(clientX - item.x, item.width - MIN_SIZE);
+  const rightX = 0;
+  const topY = Math.min(clientY - item.y, item.height - MIN_SIZE);
+  const bottomY = 0;
+  const leftWidth = Math.max(item.width - clientX + item.x, MIN_SIZE);
+  const rightWidth = Math.max(clientX - item.x, MIN_SIZE);
+  const topHeight = Math.max(item.height - clientY + item.y, MIN_SIZE);
+  const bottomHeight = Math.max(clientY - item.y, MIN_SIZE);
+
+  const defaultHorizontal: HorizontalResizeData = { x: 0, width: item.width };
+  const defaultVertical: VerticalResizeData = { y: 0, height: item.height };
+
+  const left: HorizontalResizeData = { x: leftX, width: leftWidth };
+  const right: HorizontalResizeData = { x: rightX, width: rightWidth };
+  const top: VerticalResizeData = { y: topY, height: topHeight };
+  const bottom: VerticalResizeData = { y: bottomY, height: bottomHeight };
 
   return {
-    [CornerCursor.LeftTop]: {
-      pending: {
-        x: limitX,
-        y: limitY,
-        width: limitWidthFromLeft,
-        height: limitHeightFromTop,
-      },
-      done: {
-        x: item.x + limitX,
-        y: item.y + limitY,
-        width: limitWidthFromLeft,
-        height: limitHeightFromTop,
-      },
-    },
-    [CornerCursor.LeftBottom]: {
-      pending: {
-        x: limitX,
-        y: 0,
-        width: limitWidthFromLeft,
-        height: limitHeightFromBottom,
-      },
-      done: {
-        x: item.x + limitX,
-        y: item.y,
-        width: limitWidthFromLeft,
-        height: limitHeightFromBottom,
-      },
-    },
-    [CornerCursor.RightTop]: {
-      pending: {
-        x: 0,
-        y: limitY,
-        width: limitWidthFromRight,
-        height: limitHeightFromTop,
-      },
-      done: {
-        x: item.x,
-        y: item.y + limitY,
-        width: limitWidthFromRight,
-        height: limitHeightFromTop,
-      },
-    },
-    [CornerCursor.RightBottom]: {
-      pending: {
-        x: 0,
-        y: 0,
-        width: limitWidthFromRight,
-        height: limitHeightFromBottom,
-      },
-      done: {
-        x: item.x,
-        y: item.y,
-        width: limitWidthFromRight,
-        height: limitHeightFromBottom,
-      },
-    },
-    [EdgeCursor.Left]: {
-      pending: {
-        x: 0,
-        y: 0,
-        width: item.width,
-        height: item.height,
-      },
-      done: {
-        x: item.x,
-        y: item.y,
-        width: item.width,
-        height: item.height,
-      },
-    },
-    [EdgeCursor.Right]: {
-      pending: {
-        x: 0,
-        y: 0,
-        width: item.width,
-        height: item.height,
-      },
-      done: {
-        x: item.x,
-        y: item.y,
-        width: item.width,
-        height: item.height,
-      },
-    },
-    [EdgeCursor.Top]: {
-      pending: {
-        x: 0,
-        y: 0,
-        width: item.width,
-        height: item.height,
-      },
-      done: {
-        x: item.x,
-        y: item.y,
-        width: item.width,
-        height: item.height,
-      },
-    },
-    [EdgeCursor.Bottom]: {
-      pending: {
-        x: 0,
-        y: 0,
-        width: item.width,
-        height: item.height,
-      },
-      done: {
-        x: item.x,
-        y: item.y,
-        width: item.width,
-        height: item.height,
-      },
-    },
+    [CornerCursor.LeftTop]: { ...left, ...top },
+    [CornerCursor.LeftBottom]: { ...left, ...bottom },
+    [CornerCursor.RightTop]: { ...right, ...top, },
+    [CornerCursor.RightBottom]: { ...right, ...bottom },
+    [EdgeCursor.Left]: { ...left, ...defaultVertical, },
+    [EdgeCursor.Right]: { ...right, ...defaultVertical, },
+    [EdgeCursor.Top]: { ...defaultHorizontal, ...top, },
+    [EdgeCursor.Bottom]: { ...defaultHorizontal, ...bottom },
   };
 };

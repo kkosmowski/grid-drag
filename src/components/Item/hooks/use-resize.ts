@@ -61,14 +61,22 @@ export const useResize = ({ ref, item, cursor, onStart, onResize }: UseMoveProps
 
   const onResizeDrag = ({ clientX, clientY }: MouseEvent) => {
     if (isResizing.current) {
-      setResize(resizeMap(clientX, clientY)[cursor].pending);
+      setResize(resizeMap(clientX, clientY)[cursor]);
     }
   };
 
   const onResizeEnd = ({ clientX, clientY }: MouseEvent) => {
     if (isResizing.current) {
-      // @todo: possibly done is just x + item.x, y + item.y and rest is the same
-      onResize(item.id, resizeMap(clientX, clientY)[cursor].done);
+      const relativeResizeData = resizeMap(clientX, clientY)[cursor];
+      // resize map contains position of pseudo element (relative to item), but absolute position must be passed to grid
+      const absoluteResizeData: ResizeData = {
+        x: relativeResizeData.x + item.x,
+        y: relativeResizeData.y + item.y,
+        width: relativeResizeData.width,
+        height: relativeResizeData.height
+      };
+
+      onResize(item.id, absoluteResizeData);
     }
     clear();
 
