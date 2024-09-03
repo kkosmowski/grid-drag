@@ -1,6 +1,8 @@
 import  styles from './Grid.module.css';
 import { Item } from '~/components/Item';
-import { Rectangle } from '~/types/item.ts';
+import { Position, Rectangle } from '~/types/item.ts';
+import { useEffect, useState } from 'react';
+import { normalizePosition } from '~/components/Grid/Grid.utils.ts';
 
 const itemsMock: Rectangle[] = [
   {
@@ -38,9 +40,17 @@ const itemsMock: Rectangle[] = [
 ]
 
 export const Grid = () => {
+  const [items, setItems] = useState<Rectangle[]>(itemsMock);
+
+  const handleMove = (id: string, position: Position) => {
+    console.log(id, position);
+    const normalized = normalizePosition(position);
+    setItems((current) => current.map((item) => item.id === id ? ({ ...item, ...normalized }) : item));
+  }
+
   return (
     <section className={styles.grid}>
-      {itemsMock.map((item) => <Item key={item.id} {...item} />)}
+      {items.map((item) => <Item key={item.id} {...item} onMove={handleMove} />)}
     </section>
   )
 }

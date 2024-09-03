@@ -1,14 +1,25 @@
-import { CSSProperties, useRef } from 'react';
+import { CSSProperties, useEffect, useRef } from 'react';
 
-import { Rectangle } from '~/types/item';
+import { Position, Rectangle } from '~/types/item';
 
 import styles from './Item.module.css';
+import { useEdges } from './hooks/use-edges';
+import { useResize } from '~/components/Item/hooks/use-resize';
+import { useMove } from '~/components/Item/hooks/use-move';
 
-type ItemProps = Rectangle;
+type ItemProps = Rectangle & {
+  onMove: (id: string, position: Position) => void;
+};
 
-export const Item = (props: ItemProps) => {
-  const { id, x, y, width, height, color} = props;
+export const Item = ({ onMove, ...item }: ItemProps) => {
+  const { id, x, y, width, height, color} = item;
   const ref = useRef<HTMLDivElement | null>(null);
+  const { cursor } = useEdges(ref, item);
+
+  if (item.id === '2') console.log('item', item);
+
+  useResize({ ref, item, cursor });
+  useMove({ ref, item, cursor, onMove });
 
   const itemStyle: CSSProperties = {
     zIndex: id,
