@@ -12,6 +12,9 @@ type UseMoveProps = {
   onResize: (id: string, data: ResizeData) => void;
 }
 
+// @todo: fix a bug where holding mouse on edge and moving it into center toggles resize with cursor null/"move"
+//   a) possibly reducing the timeout can be valid solution
+//   b) otherwise need to clear timeout on cursor change (or maybe watch cursor in the useEffect?)
 export const useResize = ({ ref, item, cursor, onStart, onResize }: UseMoveProps) => {
   const canBeResized = cursor !== null;
   const isResizing = useRef(false);
