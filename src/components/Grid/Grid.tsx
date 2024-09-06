@@ -1,10 +1,13 @@
-import  styles from './Grid.module.css';
+import { useRef, useState } from 'react';
+
 import { Item } from '~/components/Item';
 import { Position, Rectangle, ResizeData, Size } from '~/types/item';
-import { useRef, useState } from 'react';
-import { normalizePosition, normalizeSize } from '~/components/Grid/Grid.utils';
 import { GRID_SIZE } from '~/consts';
 import { FloatingUI } from '~/components/FloatingUI';
+import { useRemove } from '~/contexts/RemoveItemsContext';
+
+import { normalizePosition, normalizeSize } from './Grid.utils';
+import  styles from './Grid.module.css';
 
 const itemsMock: Rectangle[] = [
   {
@@ -44,6 +47,12 @@ const itemsMock: Rectangle[] = [
 export const Grid = () => {
   const [items, setItems] = useState<Rectangle[]>(itemsMock);
   const previousItems = useRef(items);
+  const remove = useRemove();
+
+  const handleRemoveItems = () => {
+    setItems((items) => items.filter(({ id }) => !remove.items.includes(id)));
+    remove.onAfterRemove();
+  };
 
   const handleRemoveAll = () => {
     previousItems.current = items;
@@ -74,10 +83,16 @@ export const Grid = () => {
     );
   }
 
+  const handleClick = (itemId: string) => {
+    if (remove.isOn) {
+      remove.select(itemId);
+    }
+  }
+
   return (
     <section className={styles.grid} style={{ backgroundSize: `${GRID_SIZE}px ${GRID_SIZE}px`}}>
-      <FloatingUI removeAllDisabled={!items.length} onRemoveAll={handleRemoveAll} onUndoRemoveAll={handleUndoRemoveAll} />
-      {items.map((item) => <Item key={item.id} {...item} onMove={handleMove} onResize={handleResize} />)}
+      <FloatingUI removeDisabled={!items.length} onRemoveItems={handleRemoveItems} onRemoveAll={handleRemoveAll} onUndoRemoveAll={handleUndoRemoveAll} />
+      {items.map((item) => <Item key={item.id} {...item} onClick={handleClick} onMove={handleMove} onResize={handleResize} />)}
     </section>
   )
 }

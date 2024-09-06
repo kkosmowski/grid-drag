@@ -7,16 +7,21 @@ import { useEdges } from './hooks/use-edges';
 import { useResize } from '~/components/Item/hooks/use-resize';
 import { useMove } from '~/components/Item/hooks/use-move';
 import { setStyleProp } from '~/utils/set-style-prop';
+import { useRemove } from '~/contexts/RemoveItemsContext.tsx';
+import { setStyle } from '~/utils/set-style.ts';
 
 type ItemProps = Rectangle & {
+  isMarkedForRemoval: boolean;
+  onClick: (id: string) => void;
   onMove: (id: string, position: Position) => void;
   onResize: (id: string, data: ResizeData) => void;
 };
 
-export const Item = ({ onMove, onResize, ...item }: ItemProps) => {
+export const Item = ({ isMarkedForRemoval, onClick, onMove, onResize, ...item }: ItemProps) => {
   const { id, x, y, width, height, color} = item;
   const ref = useRef<HTMLDivElement | null>(null);
   const freezeCursor = useRef(false);
+  const remove = useRemove();
 
   const handleStart = () => {
     freezeCursor.current = true;
@@ -48,7 +53,16 @@ export const Item = ({ onMove, onResize, ...item }: ItemProps) => {
     setStyleProp(ref, '--color', color);
   }, [color]);
 
+  useEffect(() => {
+    setStyle(ref, 'opacity', remove.isSelected(id) ? '0.5' : '');
+  }, [remove.isSelected]);
+
+  useEffect(() => {
+    setStyle(ref, 'cursor',  remove.isOn ? 'pointer' : '');
+    freezeCursor.current = remove.isOn;
+  }, [remove.isOn]);
+
   return (
-    <div ref={ref} className={styles.item} style={itemStyle} />
+    <div ref={ref} className={styles.item} style={itemStyle} onClick={() => onClick(id)} />
   )
 }
