@@ -3,6 +3,9 @@ import { useRef, useState } from 'react';
 import styles from './FloatingUI.module.css';
 import { RemoveAllModal } from './components/RemovalAllModal';
 import { useRemove } from '~/contexts/RemoveItemsContext';
+import { Button } from '~/components/Button';
+import { IconButton } from '~/components/IconButton';
+import { Row } from '~/components/Row';
 
 type FloatingUIProps = {
   removeDisabled: boolean;
@@ -63,26 +66,29 @@ export const FloatingUI = ({ removeDisabled, onRemoveItems, onRemoveAll, onUndoR
   return (
     <header className={styles.header}>
       {remove.isOn ? (
-        <>
-          <button disabled={!remove.items.length} className="small" onClick={() => onRemoveItems()}>
-            Remove {remove.items.length ? `(${remove.items.length})` : ''}
-          </button>
-          <button className="small" onClick={() => remove.onToggle()}>
-            Cancel removal
-          </button>
-        </>
+        <Row>
+          <IconButton
+            name="delete_sweep"
+            color="error"
+            disabled={!remove.items.length}
+            onClick={() => onRemoveItems()}
+          />
+          <IconButton name="cancel" onClick={() => remove.onToggle()} />
+        </Row>
       ) : (
-        <button disabled={removeDisabled} className="small" onClick={() => remove.onToggle()}>
-          Remove items
-        </button>
+        <IconButton name="delete" disabled={removeDisabled} onClick={() => remove.onToggle()} />
       )}
 
       {wasRemoveAllJustDone ? (
-        <button className="small" onClick={() => undoRemoveAll()}>Undo ({undoTimeLeft})</button>
+        <Button onClick={() => undoRemoveAll()}>Undo ({undoTimeLeft})</Button>
       ) : (
-      <button disabled={removeDisabled || remove.isOn} className="small" onClick={tryRemoveAll}>
-        Remove all
-      </button>
+        <IconButton
+          name="delete_forever"
+          variant="filled"
+          disabled={removeDisabled || remove.isOn}
+          color="error"
+          onClick={tryRemoveAll}
+        />
       )}
 
       <RemoveAllModal open={isRemoveAllModalOpen} onCancel={handleCancel} onConfirm={handleConfirm} />

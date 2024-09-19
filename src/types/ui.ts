@@ -6,3 +6,6 @@ export type RemoveProps = {
   onToggle: VoidFunction;
   onAfterRemove: VoidFunction;
 };
+
+export type Color = 'regular' | 'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'error';
+export type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
