@@ -66,7 +66,7 @@ export const FloatingUI = ({ removeDisabled, onRemoveItems, onRemoveAll, onUndoR
   return (
     <header className={styles.header}>
       {remove.isOn ? (
-        <Row>
+        <Row gap={4}>
           <IconButton
             name="delete_sweep"
             color="error"
