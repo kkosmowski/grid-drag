@@ -1,0 +1,51 @@
+.stack {
+    display: flex;
+}
+
+.stack:global(.stack--reverse) {
+    flex-direction: row-reverse;
+}
+
+.stack:global(.stack--inline) {
+    display: inline-flex;
+}
+
+.stack:global(.stack--jc-flex-start) {
+    justify-content: flex-start;
+}
+
+.stack:global(.stack--jc-center) {
+    justify-content: center;
+}
+
+.stack:global(.stack--jc-flex-end) {
+    justify-content: flex-end;
+}
+
+.stack:global(.stack--jc-space-around) {
+    justify-content: space-around;
+}
+
+.stack:global(.stack--jc-space-between) {
+    justify-content: space-between;
+}
+
+.stack:global(.stack--jc-space-evenly) {
+    justify-content: space-evenly;
+}
+
+.stack:global(.stack--ai-flex-start) {
+    align-items: flex-start;
+}
+
+.stack:global(.stack--ai-center) {
+    align-items: center;
+}
+
+.stack:global(.stack--ai-flex-end) {
+    align-items: flex-end;
+}
+
+.stack:global(.stack--ai-stretch) {
+    align-items: stretch;
+}

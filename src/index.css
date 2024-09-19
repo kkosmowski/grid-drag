@@ -11,6 +11,8 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --button-sm-size: 28px;
+  --button-md-size: 32px;
 }
 
 html {
@@ -29,29 +31,40 @@ body, p, h1, h2, h3, h4, h5, h6, ul, ol, li {
 }
 
 button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
   cursor: pointer;
   border: 0;
+  font-family: inherit;
   font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1;
   padding: 4px 8px;
+  height: var(--button-md-size);
 }
 
 button:disabled {
   cursor: initial;
 }
 
-button.small {
+button.sm {
   font-size: 13px;
+  height: var(--button-sm-size);
 }
 
-button:not(.primary) {
-  background-color: dimgrey;
+button.regular {
+  background-color: #918b8b;
 }
 
-button:not(.primary):hover {
-  background-color: #737373;
+button.regular:hover {
+  background-color: #9f9a9a;
 }
 
-button:not(.primary):disabled {
+button.regular:disabled {
   background-color: #aaa;
   color: #eee;
 }
@@ -67,4 +80,74 @@ button.primary:hover {
 button.primary:disabled {
   background-color: #8fadc1;
   color: #eee;
+}
+
+button.error {
+  background-color: #b33838;
+}
+
+button.error:hover {
+  background-color: #c25252;
+}
+
+button.error:disabled {
+  background-color: #ab6363;
+  color: #eee;
+}
+
+button.icon-button {
+  width: var(--button-md-size);
+  padding: 0;
+}
+
+.button.icon-button.sm {
+  width: var(--button-sm-size);
+}
+
+.icon.xs {
+  font-size: 16px;
+}
+
+.icon.sm {
+  font-size: 20px;
+}
+
+.icon.md {
+  font-size: 24px;
+}
+
+.icon.lg {
+  font-size: 28px;
+}
+
+.icon.xl {
+  font-size: 32px;
+}
+
+.icon.regular {
+  color: inherit;
+}
+
+.icon.primary {
+  color: #538fc1;
+}
+
+.icon.secondary {
+  color: #888;
+}
+
+.icon.success {
+  color: limegreen;
+}
+
+.icon.info {
+  color: deepskyblue;
+}
+
+.icon.warning {
+  color: gold;
+}
+
+.icon.error {
+  color: red;
 }
