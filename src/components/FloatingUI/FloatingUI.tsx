@@ -6,6 +6,7 @@ import { useRemove } from '~/contexts/RemoveItemsContext';
 import { Button } from '~/components/Button';
 import { IconButton } from '~/components/IconButton';
 import { Row } from '~/components/Row';
+import { useToast } from '~/hooks/use-toast';
 
 type FloatingUIProps = {
   removeDisabled: boolean;
@@ -25,6 +26,7 @@ export const FloatingUI = ({ removeDisabled, onRemoveItems, onRemoveAll, onUndoR
   const removeAllUndoTimeout = useRef<number | null>(null);
   const removeAllUndoInterval = useRef<number | null>(null);
   const remove = useRemove();
+  const { toast } = useToast();
 
   const tryRemoveAll = () => {
     setIsRemoveAllModalOpen(true);
@@ -63,8 +65,19 @@ export const FloatingUI = ({ removeDisabled, onRemoveItems, onRemoveAll, onUndoR
     cleanupAfterRemoveAll();
   }
 
+  const handleAddingItems = () => {
+    console.log('toast shown');
+    toast('Click and drag anywhere to create items.');
+  };
+
   return (
     <header className={styles.header}>
+      <IconButton
+        name="add"
+        color="primary"
+        onClick={() => handleAddingItems()}
+      />
+
       {remove.isOn ? (
         <Row gap={4}>
           <IconButton

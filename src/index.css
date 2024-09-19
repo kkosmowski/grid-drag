@@ -49,6 +49,7 @@ button {
 
 button:disabled {
   cursor: initial;
+  color: #fffb;
 }
 
 button.sm {
@@ -57,42 +58,51 @@ button.sm {
 }
 
 button.regular {
-  background-color: #918b8b;
+  background-color: #8d8383;
 }
 
 button.regular:hover {
-  background-color: #9f9a9a;
+  background-color: #a49b9b;
+}
+
+button.regular:active {
+  background-color: #b9b1b1;
 }
 
 button.regular:disabled {
-  background-color: #aaa;
-  color: #eee;
+  background-color: #8d8383;
 }
 
 button.primary {
-  background-color: steelblue;
+  background-color: #1984da;
 }
 
 button.primary:hover {
-  background-color: #538fc1;
+  background-color: #3a98e3;
+}
+
+button.primary:active {
+  background-color: #67b4f3;
 }
 
 button.primary:disabled {
-  background-color: #8fadc1;
-  color: #eee;
+  background-color: #74adda;
 }
 
 button.error {
-  background-color: #b33838;
+  background-color: #c43131;
 }
 
 button.error:hover {
-  background-color: #c25252;
+  background-color: #d55151;
+}
+
+button.error:active {
+  background-color: #e78282;
 }
 
 button.error:disabled {
-  background-color: #ab6363;
-  color: #eee;
+  background-color: #c77a7a;
 }
 
 button.icon-button {
