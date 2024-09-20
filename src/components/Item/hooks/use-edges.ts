@@ -1,4 +1,4 @@
-import { MouseEvent, useState, useEffect, MutableRefObject } from 'react';
+import { MutableRefObject, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { Cursor, ItemCorners, ItemEdges, ItemRef, Rectangle } from '~/types/item';
@@ -28,9 +28,9 @@ export const useEdges = (ref: ItemRef, item: Rectangle, freezeCursor: MutableRef
       setCursor(newCursor);
       setStyle(ref, 'cursor', newCursor ?? '');
     }
-  }
+  };
 
-  const edgeListener = useDebouncedCallback(({ clientX, clientY }: MouseEvent<HTMLDivElement>) => {
+  const edgeListener = useDebouncedCallback(({ clientX, clientY }: MouseEvent) => {
     const isLE = isLeftEdge(clientX, item);
     const isRE = isRightEdge(clientX, item);
     const isTE = isTopEdge(clientY, item);
@@ -48,8 +48,8 @@ export const useEdges = (ref: ItemRef, item: Rectangle, freezeCursor: MutableRef
       if (ref.current) {
         ref.current!.removeEventListener('mousemove', edgeListener);
       }
-    }
+    };
   }, [ref.current]);
 
   return { cursor };
-}
+};

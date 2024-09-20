@@ -6,46 +6,14 @@ import { GRID_SIZE } from '~/consts';
 import { FloatingUI } from '~/components/FloatingUI';
 import { useRemove } from '~/contexts/RemoveItemsContext';
 
-import { normalizePosition, normalizeSize } from './Grid.utils';
-import  styles from './Grid.module.css';
-
-const itemsMock: Rectangle[] = [
-  {
-    id: '1',
-    x: 120,
-    y: 140,
-    width: 100,
-    height: 70,
-    color: '#823751',
-  },
-  {
-    id: '2',
-    x: 340,
-    y: 290,
-    width: 170,
-    height: 210,
-    color: '#a8dfa1',
-  },
-  {
-    id: '3',
-    x: 280,
-    y: 130,
-    width: 220,
-    height: 30,
-    color: '#8c81c4',
-  },
-  {
-    id: '4',
-    x: 160,
-    y: 160,
-    width: 40,
-    height: 40,
-    color: '#eca236',
-  },
-]
+import { normalizePosition, normalizeSize } from '~/utils/normalize';
+import styles from './Grid.module.css';
+import { itemsMock } from './Grid.mock';
+import { CreateItemsOverlay } from '../CreateItemsOverlay';
 
 export const Grid = () => {
   const [items, setItems] = useState<Rectangle[]>(itemsMock);
+  const [isAddMode, setIsAddMode] = useState(false);
   const previousItems = useRef(items);
   const remove = useRemove();
 
@@ -63,36 +31,58 @@ export const Grid = () => {
     setItems(previousItems.current);
   };
 
-  const handleMove = (id: string, position: Position) => {
+  const handleMove = (id: Rectangle['id'], position: Position) => {
     const normalizedPosition = normalizePosition(position);
 
     previousItems.current = items;
-    setItems((current) => current.map(
-      (item) => item.id === id ? ({ ...item, ...normalizedPosition }) : item)
-    );
-  }
+    setItems((current) => current.map((item) => (item.id === id ? { ...item, ...normalizedPosition } : item)));
+  };
 
-  const handleResize = (id: string, resizeData: ResizeData) => {
+  const handleResize = (id: Rectangle['id'], resizeData: ResizeData) => {
     const { width, height, ...position } = resizeData;
     const normalizedSize: Size = normalizeSize({ width, height });
     const normalizedPosition = normalizePosition(position);
 
     previousItems.current = items;
-    setItems((current) => current.map(
-      (item) => item.id === id ? ({ ...item, ...normalizedSize, ...normalizedPosition }) : item)
+    setItems((current) =>
+      current.map((item) => (item.id === id ? { ...item, ...normalizedSize, ...normalizedPosition } : item)),
     );
-  }
+  };
 
-  const handleClick = (itemId: string) => {
+  const handleClick = (id: Rectangle['id']) => {
     if (remove.isOn) {
-      remove.select(itemId);
+      remove.select(id);
     }
-  }
+  };
+
+  const handleCreateItem = (itemWithoutId: Omit<Rectangle, 'id'>) => {
+    const normalizedItem: Rectangle = {
+      id: items.length,
+      color: itemWithoutId.color,
+      ...normalizePosition(itemWithoutId),
+      ...normalizeSize(itemWithoutId),
+    };
+
+    setItems((items) => [...items, normalizedItem]);
+  };
 
   return (
-    <section className={styles.grid} style={{ backgroundSize: `${GRID_SIZE}px ${GRID_SIZE}px`}}>
-      <FloatingUI removeDisabled={!items.length} onRemoveItems={handleRemoveItems} onRemoveAll={handleRemoveAll} onUndoRemoveAll={handleUndoRemoveAll} />
-      {items.map((item) => <Item key={item.id} {...item} onClick={handleClick} onMove={handleMove} onResize={handleResize} />)}
+    <section className={styles.grid} style={{ backgroundSize: `${GRID_SIZE}px ${GRID_SIZE}px` }}>
+      <FloatingUI
+        isAddMode={isAddMode}
+        removeDisabled={!items.length}
+        onRemoveItems={handleRemoveItems}
+        onRemoveAll={handleRemoveAll}
+        onUndoRemoveAll={handleUndoRemoveAll}
+        onEnableAddMode={() => setIsAddMode(true)}
+        onDisableAddMode={() => setIsAddMode(false)}
+      />
+
+      {items.map((item) => (
+        <Item key={item.id} {...item} onClick={handleClick} onMove={handleMove} onResize={handleResize} />
+      ))}
+
+      {isAddMode && <CreateItemsOverlay onCreate={handleCreateItem} />}
     </section>
-  )
-}
+  );
+};

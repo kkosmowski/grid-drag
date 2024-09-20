@@ -1,0 +1,20 @@
+.toast {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 12px;
+    font-size: 14px;
+    background-color: #b9b1b199;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease-in-out;
+    will-change: transform;
+}
+
+.toast:global(.visible) {
+    transform: translateX(0);
+}
+
+.toast:global(.no-point) {
+    pointer-events: none;
+    user-select: none;
+}

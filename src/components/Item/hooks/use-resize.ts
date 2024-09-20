@@ -3,17 +3,17 @@ import { useEffect, useRef } from 'react';
 import { setStyleProp } from '~/utils/set-style-prop';
 import { setStyle } from '~/utils/set-style';
 import { createResizeMap } from '~/components/Item/hooks/use-resize.utils';
-import { HOLD_TIME_MS } from '~/consts.ts';
+import { HOLD_TIME_MS } from '~/consts';
 
-type UseMoveProps = {
+type UseResizeProps = {
   ref: ItemRef;
   item: Rectangle;
   cursor: Cursor | null;
   onStart: VoidFunction;
-  onResize: (id: string, data: ResizeData) => void;
-}
+  onResize: (id: Rectangle['id'], data: ResizeData) => void;
+};
 
-export const useResize = ({ ref, item, cursor, onStart, onResize }: UseMoveProps) => {
+export const useResize = ({ ref, item, cursor, onStart, onResize }: UseResizeProps) => {
   const canBeResized = cursor !== null;
   const isResizing = useRef(false);
   const clickTimeout = useRef<number | null>(null);
@@ -27,7 +27,7 @@ export const useResize = ({ ref, item, cursor, onStart, onResize }: UseMoveProps
       clearTimeout(clickTimeout.current!);
       clickTimeout.current = null;
     }
-  }
+  };
 
   useEffect(() => {
     clear();
@@ -38,7 +38,7 @@ export const useResize = ({ ref, item, cursor, onStart, onResize }: UseMoveProps
     setStyleProp(ref, '--resize-y', y + 'px');
     setStyleProp(ref, '--resize-width', width + 'px');
     setStyleProp(ref, '--resize-height', height + 'px');
-  }
+  };
 
   const onResizeStart = ({ target }: MouseEvent) => {
     if (!canBeResized || target !== ref.current) return;
@@ -62,20 +62,20 @@ export const useResize = ({ ref, item, cursor, onStart, onResize }: UseMoveProps
   };
 
   const onResizeDrag = ({ clientX, clientY }: MouseEvent) => {
-    if (isResizing.current) {
+    if (isResizing.current && cursor) {
       setResize(resizeMap(clientX, clientY)[cursor]);
     }
   };
 
   const onResizeEnd = ({ clientX, clientY }: MouseEvent) => {
-    if (isResizing.current) {
+    if (isResizing.current && cursor) {
       const relativeResizeData = resizeMap(clientX, clientY)[cursor];
       // resize map contains position of pseudo element (relative to item), but absolute position must be passed to grid
       const absoluteResizeData: ResizeData = {
         x: relativeResizeData.x + item.x,
         y: relativeResizeData.y + item.y,
         width: relativeResizeData.width,
-        height: relativeResizeData.height
+        height: relativeResizeData.height,
       };
 
       onResize(item.id, absoluteResizeData);
@@ -102,6 +102,6 @@ export const useResize = ({ ref, item, cursor, onStart, onResize }: UseMoveProps
         window.removeEventListener('mousemove', onResizeDrag);
         window.removeEventListener('mouseup', onResizeEnd);
       }
-    }
+    };
   }, [item]);
-}
+};

@@ -1,19 +1,27 @@
 import { MutableRefObject } from 'react';
 
-export type Rectangle = Size & Position & {
-  id: string;
-  color: string;
-}
+export type TemporaryRectangle = {
+  x0: number;
+  y0: number;
+  x1: number;
+  y1: number;
+};
+
+export type Rectangle = Size &
+  Position & {
+    id: number;
+    color: string;
+  };
 
 export type Size = {
   width: number;
   height: number;
-}
+};
 
 export type Position = {
   x: number;
   y: number;
-}
+};
 
 export type ResizeData = Size & Position;
 
@@ -22,14 +30,14 @@ export type ItemCorners = {
   isLBC: boolean;
   isRTC: boolean;
   isRBC: boolean;
-}
+};
 
 export type ItemEdges = {
   isLE: boolean;
   isRE: boolean;
   isTE: boolean;
   isBE: boolean;
-}
+};
 
 export enum CornerCursor {
   LeftTop = 'nw-resize',

@@ -1,0 +1,14 @@
+.itemOutline {
+    --resize-x: 0px;
+    --resize-y: 0px;
+    --resize-width: 0px;
+    --resize-height: 0px;
+    --color: none;
+    position: absolute;
+    top: var(--resize-y);
+    left: var(--resize-x);
+    width: var(--resize-width);
+    height: var(--resize-height);
+    border-radius: 5px;
+    border: 1px dashed #999;
+}

@@ -7,34 +7,34 @@ import { useEdges } from './hooks/use-edges';
 import { useResize } from '~/components/Item/hooks/use-resize';
 import { useMove } from '~/components/Item/hooks/use-move';
 import { setStyleProp } from '~/utils/set-style-prop';
-import { useRemove } from '~/contexts/RemoveItemsContext.tsx';
-import { setStyle } from '~/utils/set-style.ts';
+import { useRemove } from '~/contexts/RemoveItemsContext';
+import { setStyle } from '~/utils/set-style';
+import { zIndex } from '~/consts';
 
 type ItemProps = Rectangle & {
-  isMarkedForRemoval: boolean;
-  onClick: (id: string) => void;
-  onMove: (id: string, position: Position) => void;
-  onResize: (id: string, data: ResizeData) => void;
+  onClick?: (id: Rectangle['id']) => void;
+  onMove?: (id: Rectangle['id'], position: Position) => void;
+  onResize?: (id: Rectangle['id'], data: ResizeData) => void;
 };
 
-export const Item = ({ isMarkedForRemoval, onClick, onMove, onResize, ...item }: ItemProps) => {
-  const { id, x, y, width, height, color} = item;
+export const Item = ({ onClick, onMove, onResize, ...item }: ItemProps) => {
+  const { id, x, y, width, height, color } = item;
   const ref = useRef<HTMLDivElement | null>(null);
   const freezeCursor = useRef(false);
   const remove = useRemove();
 
   const handleStart = () => {
     freezeCursor.current = true;
-  }
+  };
 
-  const handleMove = (id: string, position: Position) => {
+  const handleMove = (id: Rectangle['id'], position: Position) => {
     freezeCursor.current = false;
-    onMove(id, position);
-  }
-  const handleResize = (id: string, data: ResizeData) => {
+    onMove?.(id, position);
+  };
+  const handleResize = (id: Rectangle['id'], data: ResizeData) => {
     freezeCursor.current = false;
-    onResize(id, data);
-  }
+    onResize?.(id, data);
+  };
 
   const { cursor } = useEdges(ref, item, freezeCursor);
   // @todo: consider merging these 2 hooks
@@ -42,7 +42,7 @@ export const Item = ({ isMarkedForRemoval, onClick, onMove, onResize, ...item }:
   useMove({ ref, item, cursor, onStart: handleStart, onMove: handleMove });
 
   const itemStyle: CSSProperties = {
-    zIndex: id,
+    zIndex: zIndex.item(id),
     top: y,
     left: x,
     width,
@@ -58,11 +58,9 @@ export const Item = ({ isMarkedForRemoval, onClick, onMove, onResize, ...item }:
   }, [remove.isSelected]);
 
   useEffect(() => {
-    setStyle(ref, 'cursor',  remove.isOn ? 'pointer' : '');
+    setStyle(ref, 'cursor', remove.isOn ? 'pointer' : '');
     freezeCursor.current = remove.isOn;
   }, [remove.isOn]);
 
-  return (
-    <div ref={ref} className={styles.item} style={itemStyle} onClick={() => onClick(id)} />
-  )
-}
+  return <div ref={ref} className={styles.item} style={itemStyle} onClick={() => onClick?.(id)} />;
+};

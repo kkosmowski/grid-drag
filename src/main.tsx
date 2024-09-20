@@ -4,11 +4,14 @@ import { App } from '~/components/App';
 import './index.css';
 import 'material-icons/iconfont/filled.css';
 import 'material-icons/iconfont/outlined.css';
+import { Toaster } from '~/contexts/Toaster';
 
-const rootElement = document.getElementById('root');
+const rootElement = document.getElementById('root')!;
 
 createRoot(rootElement).render(
   <StrictMode>
-    <App />
+    <Toaster>
+      <App />
+    </Toaster>
   </StrictMode>,
-)
+);

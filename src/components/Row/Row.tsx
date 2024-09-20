@@ -3,8 +3,8 @@ import React from 'react';
 import type { RowProps } from './Row.types';
 import styles from './Row.module.css';
 
-import { buildClassName } from '~/utils/build-class-name.ts';
-import { getClassNames } from '~/utils/get-class-names.ts';
+import { buildClassName } from '~/utils/build-class-name';
+import { getClassNames } from '~/utils/get-class-names';
 import { isDefined } from '~/utils/is-defined';
 import { isNumber } from '~/utils/is-number';
 
