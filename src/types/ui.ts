@@ -1,8 +1,10 @@
+import { Rectangle } from '~/types/item';
+
 export type RemoveProps = {
-  items: string[];
+  items: Rectangle['id'][];
   isOn: boolean;
-  isSelected: (id: string) => boolean;
-  select: (id: string) => void;
+  isSelected: (id: Rectangle['id']) => boolean;
+  select: (id: Rectangle['id']) => void;
   onToggle: VoidFunction;
   onAfterRemove: VoidFunction;
 };

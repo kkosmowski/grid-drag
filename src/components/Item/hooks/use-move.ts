@@ -2,19 +2,19 @@ import { Cursor, ItemRef, Position, Rectangle } from '~/types/item';
 import { useEffect, useRef } from 'react';
 import { setStyle } from '~/utils/set-style';
 import { setStyleProp } from '~/utils/set-style-prop';
-import { HOLD_TIME_MS } from '~/consts.ts';
+import { HOLD_TIME_MS } from '~/consts';
 
 type UseMoveProps = {
   ref: ItemRef;
   item: Rectangle;
   cursor: Cursor | null;
   onStart: VoidFunction;
-  onMove: (id: string, pos: Position) => void;
-}
+  onMove: (id: Rectangle['id'], pos: Position) => void;
+};
 
 const defaultInnerPosition: Position = { x: 0, y: 0 };
 
-export  const useMove = ({ ref, item, cursor, onStart, onMove }: UseMoveProps) => {
+export const useMove = ({ ref, item, cursor, onStart, onMove }: UseMoveProps) => {
   const canBeMoved = cursor === null;
   const isDragging = useRef(false);
   const innerPosition = useRef<Position>(defaultInnerPosition);
@@ -28,7 +28,7 @@ export  const useMove = ({ ref, item, cursor, onStart, onMove }: UseMoveProps) =
       clearTimeout(clickTimeout.current!);
       clickTimeout.current = null;
     }
-  }
+  };
 
   const onDragStart = ({ clientX, clientY }: MouseEvent) => {
     if (!canBeMoved) return;
@@ -43,7 +43,7 @@ export  const useMove = ({ ref, item, cursor, onStart, onMove }: UseMoveProps) =
       innerPosition.current = {
         x: clientX - item.x,
         y: clientY - item.y,
-      }
+      };
 
       if (ref.current) {
         setStyleProp(ref, '--shadow', '0 0 8px 1px #0004');
@@ -90,8 +90,8 @@ export  const useMove = ({ ref, item, cursor, onStart, onMove }: UseMoveProps) =
         ref.current!.removeEventListener('mouseup', onDragEnd);
         ref.current!.removeEventListener('mouseout', onDragEnd);
       }
-    }
+    };
   }, [item]);
 
   return null;
-}
+};

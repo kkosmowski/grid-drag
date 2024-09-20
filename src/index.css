@@ -11,8 +11,14 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --button-sm-size: 28px;
+  --button-sm-size: 24px;
   --button-md-size: 32px;
+  --button-lg-size: 40px;
+  --icon-xs-size: 16px;
+  --icon-sm-size: 20px;
+  --icon-md-size: 24px;
+  --icon-lg-size: 28px;
+  --icon-xl-size: 32px;
 }
 
 html {
@@ -106,32 +112,54 @@ button.error:disabled {
 }
 
 button.icon-button {
-  width: var(--button-md-size);
   padding: 0;
 }
 
-.button.icon-button.sm {
+button.icon-button.sm {
   width: var(--button-sm-size);
+  height: var(--button-sm-size);
+
+  > .icon {
+    font-size: var(--icon-sm-size);
+  }
+}
+
+button.icon-button.md {
+  width: var(--button-md-size);
+  height: var(--button-md-size);
+
+  > .icon {
+    font-size: var(--icon-md-size);
+  }
+}
+
+button.icon-button.lg {
+  width: var(--button-lg-size);
+  height: var(--button-lg-size);
+
+  > .icon {
+    font-size: var(--icon-lg-size);
+  }
 }
 
 .icon.xs {
-  font-size: 16px;
+  font-size: var(--icon-xs-size);
 }
 
 .icon.sm {
-  font-size: 20px;
+  font-size: var(--icon-sm-size);
 }
 
 .icon.md {
-  font-size: 24px;
+  font-size: var(--icon-md-size);
 }
 
 .icon.lg {
-  font-size: 28px;
+  font-size: var(--icon-lg-size);
 }
 
 .icon.xl {
-  font-size: 32px;
+  font-size: var(--icon-xl-size);
 }
 
 .icon.regular {

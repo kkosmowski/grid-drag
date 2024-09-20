@@ -1,4 +1,4 @@
-import { MouseEvent, useState, useEffect, MutableRefObject } from 'react';
+import { MutableRefObject, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { Cursor, ItemCorners, ItemEdges, ItemRef, Rectangle } from '~/types/item';
@@ -9,7 +9,12 @@ import { isBottomEdge, isLeftEdge, isRightEdge, isTopEdge } from '~/utils/edges-
 
 // This hook is responsible for listening to mouse on edges and handling correct cursor.
 // This cursor is later provided to the component to make decisions such as whether to resize or move.
-export const useEdges = (ref: ItemRef, item: Rectangle, freezeCursor: MutableRefObject<boolean>) => {
+export const useEdges = (
+  ref: ItemRef,
+  item: Rectangle,
+  freezeCursor: MutableRefObject<boolean>,
+  forceResize?: boolean,
+) => {
   const [cursor, setCursor] = useState<Cursor | null>(null);
 
   const handleEdgeHover = (edges: ItemEdges) => {
@@ -22,15 +27,15 @@ export const useEdges = (ref: ItemRef, item: Rectangle, freezeCursor: MutableRef
 
     const corners: ItemCorners = { isLTC, isLBC, isRTC, isRBC };
 
-    const newCursor: Cursor | null = getCornerCursor(corners) ?? getEdgeCursor(edges);
+    const newCursor: Cursor | null = forceResize ? 'cell' : (getCornerCursor(corners) ?? getEdgeCursor(edges));
 
     if (ref.current && !freezeCursor.current) {
       setCursor(newCursor);
       setStyle(ref, 'cursor', newCursor ?? '');
     }
-  }
+  };
 
-  const edgeListener = useDebouncedCallback(({ clientX, clientY }: MouseEvent<HTMLDivElement>) => {
+  const edgeListener = useDebouncedCallback(({ clientX, clientY }: MouseEvent) => {
     const isLE = isLeftEdge(clientX, item);
     const isRE = isRightEdge(clientX, item);
     const isTE = isTopEdge(clientY, item);
@@ -48,8 +53,8 @@ export const useEdges = (ref: ItemRef, item: Rectangle, freezeCursor: MutableRef
       if (ref.current) {
         ref.current!.removeEventListener('mousemove', edgeListener);
       }
-    }
+    };
   }, [ref.current]);
 
   return { cursor };
-}
+};

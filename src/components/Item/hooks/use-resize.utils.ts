@@ -1,11 +1,11 @@
 import { CornerCursor, Cursor, EdgeCursor, Rectangle, ResizeData } from '~/types/item';
-import { MIN_SIZE } from '~/consts.ts';
+import { MIN_SIZE } from '~/consts';
 
 type CreateResizeMapArgs = {
   item: Rectangle;
   clientX: number;
   clientY: number;
-}
+};
 
 type ResizeMap = Record<Cursor, ResizeData>;
 
@@ -33,11 +33,11 @@ export const createResizeMap = ({ item, clientX, clientY }: CreateResizeMapArgs)
   return {
     [CornerCursor.LeftTop]: { ...left, ...top },
     [CornerCursor.LeftBottom]: { ...left, ...bottom },
-    [CornerCursor.RightTop]: { ...right, ...top, },
+    [CornerCursor.RightTop]: { ...right, ...top },
     [CornerCursor.RightBottom]: { ...right, ...bottom },
-    [EdgeCursor.Left]: { ...left, ...defaultVertical, },
-    [EdgeCursor.Right]: { ...right, ...defaultVertical, },
-    [EdgeCursor.Top]: { ...defaultHorizontal, ...top, },
+    [EdgeCursor.Left]: { ...left, ...defaultVertical },
+    [EdgeCursor.Right]: { ...right, ...defaultVertical },
+    [EdgeCursor.Top]: { ...defaultHorizontal, ...top },
     [EdgeCursor.Bottom]: { ...defaultHorizontal, ...bottom },
   };
 };

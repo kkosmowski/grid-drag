@@ -7,7 +7,7 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   size?: Size;
 }
 
-export const Button = ({ size, color = 'regular', children, className, ...buttonProps }: ButtonProps): ReactNode => {
+export const Button = ({ size = 'md', color = 'regular', children, className, ...buttonProps }: ButtonProps): ReactNode => {
   return (
     <button className={`${color} ${size} ${className}`} {...buttonProps}>{children}</button>
   );

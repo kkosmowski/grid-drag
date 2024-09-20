@@ -1,5 +1,8 @@
 .header {
+    position: relative;
+    z-index: 100000;
     display: flex;
-    padding: 16px;
+    top: 16px;
+    left: 16px;
     gap: 16px;
 }

@@ -1,8 +1,8 @@
 .toastContainer {
     position: fixed;
-    bottom: 40px;
-    left: 0;
+    bottom: 64px;
+    left: 16px;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     gap: 4px;
 }

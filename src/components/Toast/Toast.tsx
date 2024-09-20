@@ -1,11 +1,14 @@
 import styles from './Toast.module.css';
 import { ToastData } from '~/contexts/Toaster';
 import { useEffect, useState } from 'react';
+import { useToast } from '~/hooks/use-toast';
+import { IconButton } from '~/components/IconButton';
 
-export type ToastProps = Pick<ToastData, 'content' | 'hiding'>;
+export type ToastProps = Pick<ToastData, 'id' | 'content' | 'closable' | 'hiding'>;
 
-export const Toast = ({ content, hiding }: ToastProps) => {
+export const Toast = ({ id, content, closable, hiding }: ToastProps) => {
   const [className, setClassName] = useState(styles.toast);
+  const { hideToast } = useToast();
 
   useEffect(() => {
     setClassName((cl) => `${cl} visible`);
@@ -18,6 +21,11 @@ export const Toast = ({ content, hiding }: ToastProps) => {
   }, [hiding]);
 
   return (
-    <article className={className}>{content}</article>
+    <article className={className}>
+      {content}
+      {closable && (
+        <IconButton name="close" size="sm" onClick={() => hideToast(id)} />
+      )}
+    </article>
   )
 }
