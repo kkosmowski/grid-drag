@@ -9,12 +9,7 @@ import { isBottomEdge, isLeftEdge, isRightEdge, isTopEdge } from '~/utils/edges-
 
 // This hook is responsible for listening to mouse on edges and handling correct cursor.
 // This cursor is later provided to the component to make decisions such as whether to resize or move.
-export const useEdges = (
-  ref: ItemRef,
-  item: Rectangle,
-  freezeCursor: MutableRefObject<boolean>,
-  forceResize?: boolean,
-) => {
+export const useEdges = (ref: ItemRef, item: Rectangle, freezeCursor: MutableRefObject<boolean>) => {
   const [cursor, setCursor] = useState<Cursor | null>(null);
 
   const handleEdgeHover = (edges: ItemEdges) => {
@@ -27,7 +22,7 @@ export const useEdges = (
 
     const corners: ItemCorners = { isLTC, isLBC, isRTC, isRBC };
 
-    const newCursor: Cursor | null = forceResize ? 'cell' : (getCornerCursor(corners) ?? getEdgeCursor(edges));
+    const newCursor: Cursor | null = getCornerCursor(corners) ?? getEdgeCursor(edges);
 
     if (ref.current && !freezeCursor.current) {
       setCursor(newCursor);

@@ -9,15 +9,15 @@ import { useMove } from '~/components/Item/hooks/use-move';
 import { setStyleProp } from '~/utils/set-style-prop';
 import { useRemove } from '~/contexts/RemoveItemsContext';
 import { setStyle } from '~/utils/set-style';
+import { zIndex } from '~/consts';
 
 type ItemProps = Rectangle & {
   onClick?: (id: Rectangle['id']) => void;
   onMove?: (id: Rectangle['id'], position: Position) => void;
   onResize?: (id: Rectangle['id'], data: ResizeData) => void;
-  forceResize?: boolean;
 };
 
-export const Item = ({ onClick, onMove, onResize, forceResize, ...item }: ItemProps) => {
+export const Item = ({ onClick, onMove, onResize, ...item }: ItemProps) => {
   const { id, x, y, width, height, color } = item;
   const ref = useRef<HTMLDivElement | null>(null);
   const freezeCursor = useRef(false);
@@ -36,13 +36,13 @@ export const Item = ({ onClick, onMove, onResize, forceResize, ...item }: ItemPr
     onResize?.(id, data);
   };
 
-  const { cursor } = useEdges(ref, item, freezeCursor, forceResize);
+  const { cursor } = useEdges(ref, item, freezeCursor);
   // @todo: consider merging these 2 hooks
-  useResize({ ref, item, cursor, onStart: handleStart, onResize: handleResize, forceResize });
+  useResize({ ref, item, cursor, onStart: handleStart, onResize: handleResize });
   useMove({ ref, item, cursor, onStart: handleStart, onMove: handleMove });
 
   const itemStyle: CSSProperties = {
-    zIndex: id,
+    zIndex: zIndex.item(id),
     top: y,
     left: x,
     width,

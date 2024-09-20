@@ -1,5 +1,12 @@
 import { MutableRefObject } from 'react';
 
+export type TemporaryRectangle = {
+  x0: number;
+  y0: number;
+  x1: number;
+  y1: number;
+};
+
 export type Rectangle = Size &
   Position & {
     id: number;

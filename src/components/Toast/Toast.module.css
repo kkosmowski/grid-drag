@@ -13,3 +13,8 @@
 .toast:global(.visible) {
     transform: translateX(0);
 }
+
+.toast:global(.no-point) {
+    pointer-events: none;
+    user-select: none;
+}

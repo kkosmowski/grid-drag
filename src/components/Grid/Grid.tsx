@@ -6,7 +6,7 @@ import { GRID_SIZE } from '~/consts';
 import { FloatingUI } from '~/components/FloatingUI';
 import { useRemove } from '~/contexts/RemoveItemsContext';
 
-import { normalizePosition, normalizeSize } from './Grid.utils';
+import { normalizePosition, normalizeSize } from '~/utils/normalize';
 import styles from './Grid.module.css';
 import { itemsMock } from './Grid.mock';
 import { CreateItemsOverlay } from '../CreateItemsOverlay';
@@ -56,7 +56,14 @@ export const Grid = () => {
   };
 
   const handleCreateItem = (itemWithoutId: Omit<Rectangle, 'id'>) => {
-    setItems((items) => [...items, { ...itemWithoutId, id: items.length }]);
+    const normalizedItem: Rectangle = {
+      id: items.length,
+      color: itemWithoutId.color,
+      ...normalizePosition(itemWithoutId),
+      ...normalizeSize(itemWithoutId),
+    };
+
+    setItems((items) => [...items, normalizedItem]);
   };
 
   return (

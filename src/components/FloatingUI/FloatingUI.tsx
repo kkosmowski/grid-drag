@@ -9,6 +9,7 @@ import { Row } from '~/components/Row';
 import { useToast } from '~/hooks/use-toast';
 import { ToastData } from '~/contexts/Toaster';
 import { stopPropagation } from '~/utils/stop-propagation';
+import { zIndex } from '~/consts';
 
 type FloatingUIProps = {
   isAddMode: boolean;
@@ -78,13 +79,17 @@ export const FloatingUI = (props: FloatingUIProps) => {
       toastRef.current = hideToast(toastRef.current!);
       onDisableAddMode();
     } else {
-      toastRef.current = toast('Click and drag anywhere to create items.', { persistent: true, preventClose: true });
+      toastRef.current = toast('Click and drag anywhere to create items.', {
+        persistent: true,
+        preventClose: true,
+        preventPoint: true,
+      });
       onEnableAddMode();
     }
   };
 
   return (
-    <header className={styles.header} onClick={stopPropagation}>
+    <header className={styles.header} style={{ zIndex: zIndex.ui }} onClick={stopPropagation}>
       <IconButton name={isAddMode ? 'cancel' : 'add'} color="primary" onClick={() => handleAddingItems()} />
 
       {remove.isOn ? (

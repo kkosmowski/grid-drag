@@ -7,6 +7,7 @@ export const normalizePosition = ({ x, y }: Position): Position => ({
   x: normalize(x),
   y: normalize(y),
 });
+
 export const normalizeSize = ({ width, height }: Size): Size => ({
   width: Math.max(normalize(width), MIN_SIZE),
   height: Math.max(normalize(height), MIN_SIZE),

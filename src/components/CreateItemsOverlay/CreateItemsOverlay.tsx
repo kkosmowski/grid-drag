@@ -1,38 +1,70 @@
-import { MouseEvent, useRef } from 'react';
+import { MouseEvent, useState } from 'react';
 
-import { Position, Rectangle } from '~/types/item';
+import { Rectangle, TemporaryRectangle } from '~/types/item';
 
 import styles from './CrateItemsOverlay.module.css';
+import { ItemOutline } from '~/components/ItemOutline';
+import { normalizePosition } from '~/utils/normalize';
+import { MIN_ACCEPTABLE_SIZE_TO_CREATE } from '~/consts';
+import { mapOutlineToRectangle } from '~/utils/map-outline-to-rectangle';
 
 type CreateItemsOverlayProps = {
   onCreate: (itemWithoutId: Omit<Rectangle, 'id'>) => void;
 };
 
 export const CreateItemsOverlay = ({ onCreate }: CreateItemsOverlayProps) => {
-  const partialItem = useRef<Position | null>(null);
+  const [temp, setTemp] = useState<TemporaryRectangle | null>(null);
 
   const startCreatingItem = (e: MouseEvent) => {
-    partialItem.current = { x: e.clientX, y: e.clientY };
+    const { x, y } = normalizePosition({ x: e.clientX, y: e.clientY });
+    setTemp({ x0: x, y0: y, x1: x, y1: y });
   };
 
-  const finishCreatingItem = (e: MouseEvent) => {
-    const itemWithoutIdAndColor: Omit<Rectangle, 'id' | 'color'> = {
-      x: Math.min(partialItem.current!.x, e.clientX),
-      y: Math.min(partialItem.current!.y, e.clientY),
-      width: Math.abs(partialItem.current!.x - e.clientX),
-      height: Math.abs(partialItem.current!.y - e.clientY),
-    };
-
-    // limited to 8-248 to avoid very light, very dark and over-saturated colors
-    const getRandomHex = () => Math.max(8, Math.floor(Math.random() * 248)).toString(16);
-
-    const itemWithoutId: Omit<Rectangle, 'id'> = {
-      ...itemWithoutIdAndColor,
-      color: '#' + getRandomHex() + getRandomHex() + getRandomHex(),
-    };
-
-    onCreate(itemWithoutId);
+  const updateItem = (e: MouseEvent) => {
+    if (temp) {
+      setTemp((item) => ({
+        ...item!,
+        x1: e.clientX,
+        y1: e.clientY,
+      }));
+    }
   };
 
-  return <div className={styles.createItemsOverlay} onMouseDown={startCreatingItem} onMouseUp={finishCreatingItem} />;
+  const finishCreatingItem = () => {
+    if (temp) {
+      const itemOutline = mapOutlineToRectangle(temp);
+      console.log(itemOutline);
+
+      if (itemOutline.width < MIN_ACCEPTABLE_SIZE_TO_CREATE && itemOutline.height < MIN_ACCEPTABLE_SIZE_TO_CREATE) {
+        setTemp(null);
+        return;
+      }
+
+      // limited to 8-248 to avoid very light, very dark and over-saturated colors
+      const getRandomHex = () =>
+        Math.max(8, Math.floor(Math.random() * 248))
+          .toString(16)
+          .padStart(2, '0');
+
+      const itemWithoutId: Omit<Rectangle, 'id'> = {
+        ...itemOutline,
+        color: '#' + getRandomHex() + getRandomHex() + getRandomHex(),
+      };
+
+      console.log('onCreate', itemWithoutId);
+      onCreate(itemWithoutId);
+      setTemp(null);
+    }
+  };
+
+  return (
+    <div
+      className={styles.createItemsOverlay}
+      onMouseDown={startCreatingItem}
+      onMouseMove={updateItem}
+      onMouseUp={finishCreatingItem}
+    >
+      {temp && <ItemOutline {...temp} />}
+    </div>
+  );
 };

@@ -23,9 +23,7 @@ export const Toast = ({ id, content, closable, hiding }: ToastProps) => {
   return (
     <article className={className}>
       {content}
-      {closable && (
-        <IconButton name="close" size="sm" onClick={() => hideToast(id)} />
-      )}
+      {closable && <IconButton name="close" size="sm" onClick={() => hideToast(id)} />}
     </article>
-  )
-}
+  );
+};
