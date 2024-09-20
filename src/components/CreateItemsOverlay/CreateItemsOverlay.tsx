@@ -33,7 +33,6 @@ export const CreateItemsOverlay = ({ onCreate }: CreateItemsOverlayProps) => {
   const finishCreatingItem = () => {
     if (temp) {
       const itemOutline = mapOutlineToRectangle(temp);
-      console.log(itemOutline);
 
       if (itemOutline.width < MIN_ACCEPTABLE_SIZE_TO_CREATE && itemOutline.height < MIN_ACCEPTABLE_SIZE_TO_CREATE) {
         setTemp(null);
@@ -51,7 +50,6 @@ export const CreateItemsOverlay = ({ onCreate }: CreateItemsOverlayProps) => {
         color: '#' + getRandomHex() + getRandomHex() + getRandomHex(),
       };
 
-      console.log('onCreate', itemWithoutId);
       onCreate(itemWithoutId);
       setTemp(null);
     }

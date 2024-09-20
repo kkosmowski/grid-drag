@@ -10,12 +10,14 @@ import { normalizePosition, normalizeSize } from '~/utils/normalize';
 import styles from './Grid.module.css';
 import { itemsMock } from './Grid.mock';
 import { CreateItemsOverlay } from '../CreateItemsOverlay';
+import { useContextMenu } from '~/components/Grid/hooks/use-context-menu';
 
 export const Grid = () => {
   const [items, setItems] = useState<Rectangle[]>(itemsMock);
   const [isAddMode, setIsAddMode] = useState(false);
   const previousItems = useRef(items);
   const remove = useRemove();
+  const { activeItem, closeMenu } = useContextMenu(items);
 
   const handleRemoveItems = () => {
     setItems((items) => items.filter(({ id }) => !remove.items.includes(id)));

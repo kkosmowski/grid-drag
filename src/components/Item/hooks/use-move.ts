@@ -2,7 +2,7 @@ import { Cursor, ItemRef, Position, Rectangle } from '~/types/item';
 import { useEffect, useRef } from 'react';
 import { setStyle } from '~/utils/set-style';
 import { setStyleProp } from '~/utils/set-style-prop';
-import { HOLD_TIME_MS } from '~/consts';
+import { HOLD_TIME_MS, zIndex } from '~/consts';
 
 type UseMoveProps = {
   ref: ItemRef;
@@ -30,7 +30,8 @@ export const useMove = ({ ref, item, cursor, onStart, onMove }: UseMoveProps) =>
     }
   };
 
-  const onDragStart = ({ clientX, clientY }: MouseEvent) => {
+  const onDragStart = ({ button, clientX, clientY }: MouseEvent) => {
+    if (button !== 0) return; // handle LMB only
     if (!canBeMoved) return;
 
     if (isDragging.current) {
@@ -47,7 +48,7 @@ export const useMove = ({ ref, item, cursor, onStart, onMove }: UseMoveProps) =>
 
       if (ref.current) {
         setStyleProp(ref, '--shadow', '0 0 8px 1px #0004');
-        setStyle(ref, 'z-index', '10000');
+        setStyle(ref, 'zIndex', 10000);
         setStyle(ref, 'cursor', 'move');
       }
     }, HOLD_TIME_MS);
@@ -68,7 +69,7 @@ export const useMove = ({ ref, item, cursor, onStart, onMove }: UseMoveProps) =>
 
       if (ref.current) {
         setStyleProp(ref, '--shadow', 'none');
-        setStyle(ref, 'z-index', '');
+        setStyle(ref, 'zIndex', zIndex.item(item.id));
         setStyle(ref, 'cursor', '');
       }
     }

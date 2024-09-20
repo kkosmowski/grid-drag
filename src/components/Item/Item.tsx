@@ -1,4 +1,4 @@
-import { CSSProperties, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { Position, Rectangle, ResizeData } from '~/types/item';
 
@@ -6,10 +6,11 @@ import styles from './Item.module.css';
 import { useEdges } from './hooks/use-edges';
 import { useResize } from '~/components/Item/hooks/use-resize';
 import { useMove } from '~/components/Item/hooks/use-move';
-import { setStyleProp } from '~/utils/set-style-prop';
 import { useRemove } from '~/contexts/RemoveItemsContext';
 import { setStyle } from '~/utils/set-style';
 import { zIndex } from '~/consts';
+import { setStyles } from '~/utils/set-styles';
+import { setStyleProp } from '~/utils/set-style-prop';
 
 type ItemProps = Rectangle & {
   onClick?: (id: Rectangle['id']) => void;
@@ -18,7 +19,6 @@ type ItemProps = Rectangle & {
 };
 
 export const Item = ({ onClick, onMove, onResize, ...item }: ItemProps) => {
-  const { id, x, y, width, height, color } = item;
   const ref = useRef<HTMLDivElement | null>(null);
   const freezeCursor = useRef(false);
   const remove = useRemove();
@@ -41,20 +41,19 @@ export const Item = ({ onClick, onMove, onResize, ...item }: ItemProps) => {
   useResize({ ref, item, cursor, onStart: handleStart, onResize: handleResize });
   useMove({ ref, item, cursor, onStart: handleStart, onMove: handleMove });
 
-  const itemStyle: CSSProperties = {
-    zIndex: zIndex.item(id),
-    top: y,
-    left: x,
-    width,
-    height,
-  };
+  useEffect(() => {
+    setStyles(ref, {
+      zIndex: zIndex.item(item.id),
+      top: item.y + 'px',
+      left: item.x + 'px',
+      width: item.width + 'px',
+      height: item.height + 'px',
+    });
+    setStyleProp(ref, '--color', item.color);
+  }, [item]);
 
   useEffect(() => {
-    setStyleProp(ref, '--color', color);
-  }, [color]);
-
-  useEffect(() => {
-    setStyle(ref, 'opacity', remove.isSelected(id) ? '0.5' : '');
+    setStyle(ref, 'opacity', remove.isSelected(item.id) ? '0.5' : '');
   }, [remove.isSelected]);
 
   useEffect(() => {
@@ -62,5 +61,5 @@ export const Item = ({ onClick, onMove, onResize, ...item }: ItemProps) => {
     freezeCursor.current = remove.isOn;
   }, [remove.isOn]);
 
-  return <div ref={ref} className={styles.item} style={itemStyle} onClick={() => onClick?.(id)} />;
+  return <div ref={ref} className={styles.item} onClick={() => onClick?.(item.id)} />;
 };

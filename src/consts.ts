@@ -13,6 +13,7 @@ const maxZIndex = 100000;
 
 export const zIndex = {
   item: (id: Rectangle['id']) => Math.min(id, maxZIndex),
-  temporaryItem: maxZIndex - 1,
+  temporaryItem: maxZIndex - 2,
+  draggedItem: maxZIndex - 1,
   ui: maxZIndex,
 };
