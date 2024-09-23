@@ -21,5 +21,5 @@ export type MenuData = Position & {
 export type MenuItem = {
   id: string;
   label: ReactNode;
-  onClick?: (event: MouseEvent, activeItem: Rectangle['id']) => void;
+  onClick?: (event: MouseEvent) => void;
 };

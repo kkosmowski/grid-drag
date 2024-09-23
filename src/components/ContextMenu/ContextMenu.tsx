@@ -1,5 +1,4 @@
 import { MenuData, MenuItem } from '~/types/ui';
-import { Rectangle } from '~/types/item';
 import { MENU_ITEM_HEIGHT, MENU_WIDTH, zIndex } from '~/consts';
 
 import styles from './ContextMenu.module.css';
@@ -8,7 +7,6 @@ import { Backdrop } from '~/components/Backdrop';
 type ContextMenuProps = {
   data: MenuData;
   options: MenuItem[];
-  activeItem: Rectangle['id'];
   onClose: VoidFunction;
 };
 
@@ -19,7 +17,7 @@ const getTransform = (data: MenuData) => {
   return `translate(${translateX}, ${translateY})`;
 };
 
-export const ContextMenu = ({ options, data, activeItem, onClose }: ContextMenuProps) => {
+export const ContextMenu = ({ options, data, onClose }: ContextMenuProps) => {
   const style = {
     zIndex: zIndex.popover,
     top: data.y,
@@ -33,13 +31,7 @@ export const ContextMenu = ({ options, data, activeItem, onClose }: ContextMenuP
     <>
       <menu className={styles.contextMenu} style={style}>
         {options.map((menuItem) => (
-          <li
-            key={menuItem.id}
-            onClick={(e) => {
-              menuItem.onClick?.(e, activeItem);
-              onClose();
-            }}
-          >
+          <li key={menuItem.id} onClick={menuItem.onClick}>
             {menuItem.label}
           </li>
         ))}

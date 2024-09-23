@@ -1,4 +1,4 @@
-import { MouseEvent, useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { Item } from '~/components/Item';
 import { Position, Rectangle, ResizeData, Size } from '~/types/item';
@@ -10,10 +10,9 @@ import { normalizePosition, normalizeSize } from '~/utils/normalize';
 import styles from './Grid.module.css';
 import { itemsMock } from './Grid.mock';
 import { CreateItemsOverlay } from '../CreateItemsOverlay';
-import { useContextMenu } from '~/components/Grid/hooks/use-context-menu';
+import { useItemContextMenu } from '~/components/Grid/hooks/use-item-context-menu';
 import { ContextMenu } from '~/components/ContextMenu/ContextMenu';
-import { MenuItem } from '~/types/ui';
-import { isDefined } from '~/utils/is-defined';
+import { getItem } from '~/utils/get-item';
 
 export const Grid = () => {
   const [items, setItems] = useState<Rectangle[]>(itemsMock);
@@ -29,33 +28,30 @@ export const Grid = () => {
     [items, setItems],
   );
 
-  const moveItemToFront = useCallback(
-    (_: MouseEvent, itemId: Rectangle['id']) => {
-      const item: Rectangle = items.find((item) => item.id === itemId)!;
-      setItems((current) => [...current.filter((item) => item.id !== itemId), { ...item }]);
-    },
-    [items, setItems],
-  );
+  const handleColorChange = (itemId: Rectangle['id'], color: string) => {
+    modifyItem(itemId, { color });
+  };
 
-  const moveItemToBack = useCallback(
-    (_: MouseEvent, itemId: Rectangle['id']) => {
-      const item: Rectangle = items.find((item) => item.id === itemId)!;
-      setItems((current) => [{ ...item }, ...current.filter((item) => item.id !== itemId)]);
-    },
-    [items, setItems],
-  );
+  const handleLayerChange = (itemId: Rectangle['id'], where: -1 | 1) => {
+    const item = getItem(items, itemId);
 
-  const changeItemColor = useCallback((_: MouseEvent, _itemId: Rectangle['id']) => {}, []);
+    if (!item) {
+      console.error('handleLayerChange: no item found.');
+      return;
+    }
 
-  const itemMenuOptions: MenuItem[] = useMemo(
-    () => [
-      { id: 'item-to-top', label: <>Move to front &#x2191;</>, onClick: moveItemToFront.bind(moveItemToFront) },
-      { id: 'item-to-bottom', label: <>Move to back &#x2193;</>, onClick: moveItemToBack.bind(moveItemToBack) },
-      { id: 'item-change-color', label: <>Set color</>, onClick: changeItemColor.bind(changeItemColor) },
-    ],
-    [moveItemToFront, moveItemToBack, changeItemColor],
-  );
-  const { activeItem, menuData, closeMenu } = useContextMenu(items, itemMenuOptions);
+    if (where === -1) {
+      setItems((current) => [item, ...current.filter(({ id }) => id !== itemId)]);
+    } else {
+      setItems((current) => [...current.filter(({ id }) => id !== itemId), item]);
+    }
+  };
+
+  const { menuData, options, closeMenu } = useItemContextMenu({
+    items,
+    onColorChange: handleColorChange,
+    onLayerChange: handleLayerChange,
+  });
 
   const handleRemoveItems = () => {
     setItems((items) => items.filter(({ id }) => !remove.items.includes(id)));
@@ -126,9 +122,7 @@ export const Grid = () => {
 
       {isAddMode && <CreateItemsOverlay onCreate={handleCreateItem} />}
 
-      {isDefined(activeItem) && menuData && (
-        <ContextMenu options={itemMenuOptions} data={menuData} activeItem={activeItem} onClose={closeMenu} />
-      )}
+      {menuData && <ContextMenu options={options} data={menuData} onClose={closeMenu} />}
     </section>
   );
 };
