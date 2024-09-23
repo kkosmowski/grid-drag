@@ -8,17 +8,17 @@ import { useResize } from '~/components/Item/hooks/use-resize';
 import { useMove } from '~/components/Item/hooks/use-move';
 import { useRemove } from '~/contexts/RemoveItemsContext';
 import { setStyle } from '~/utils/set-style';
-import { zIndex } from '~/consts';
 import { setStyles } from '~/utils/set-styles';
 import { setStyleProp } from '~/utils/set-style-prop';
 
 type ItemProps = Rectangle & {
+  layer: number;
   onClick?: (id: Rectangle['id']) => void;
   onMove?: (id: Rectangle['id'], position: Position) => void;
   onResize?: (id: Rectangle['id'], data: ResizeData) => void;
 };
 
-export const Item = ({ onClick, onMove, onResize, ...item }: ItemProps) => {
+export const Item = ({ layer, onClick, onMove, onResize, ...item }: ItemProps) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const freezeCursor = useRef(false);
   const remove = useRemove();
@@ -43,7 +43,6 @@ export const Item = ({ onClick, onMove, onResize, ...item }: ItemProps) => {
 
   useEffect(() => {
     setStyles(ref, {
-      zIndex: zIndex.item(item.id),
       top: item.y + 'px',
       left: item.x + 'px',
       width: item.width + 'px',
@@ -51,6 +50,10 @@ export const Item = ({ onClick, onMove, onResize, ...item }: ItemProps) => {
     });
     setStyleProp(ref, '--color', item.color);
   }, [item]);
+
+  useEffect(() => {
+    setStyleProp(ref, '--layer', layer);
+  }, [layer]);
 
   useEffect(() => {
     setStyle(ref, 'opacity', remove.isSelected(item.id) ? '0.5' : '');

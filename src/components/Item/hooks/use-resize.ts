@@ -83,7 +83,7 @@ export const useResize = ({ ref, item, cursor, onStart, onResize }: UseResizePro
 
       if (ref.current) {
         setStyleProp(ref, '--resize', 'none');
-        setStyle(ref, 'zIndex', zIndex.item(item.id));
+        setStyle(ref, 'zIndex', '');
       }
     }
   };

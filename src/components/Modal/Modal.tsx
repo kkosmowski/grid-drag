@@ -1,12 +1,15 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react';
 
 import styles from './Modal.module.css';
+import { Backdrop } from '~/components/Backdrop';
+import { zIndex } from '~/consts';
+import { stopPropagation } from '~/utils/stop-propagation';
 
 type ModalProps = {
   open: boolean;
   children: ReactNode;
   onClose?: VoidFunction;
-}
+};
 
 export const Modal = ({ open, children, onClose }: ModalProps) => {
   if (!open) {
@@ -15,8 +18,8 @@ export const Modal = ({ open, children, onClose }: ModalProps) => {
 
   return (
     <>
-      <div className={`${styles.backdrop} ${onClose ? styles.closable : ''}`} onClick={() => onClose?.()} />
-      <aside className={styles.modal}>
+      <Backdrop onClose={onClose} />
+      <aside className={styles.modal} style={{ zIndex: zIndex.popover }} onContextMenu={stopPropagation}>
         {children}
       </aside>
     </>
@@ -24,16 +27,25 @@ export const Modal = ({ open, children, onClose }: ModalProps) => {
 };
 
 const ModalTitle = ({ children }: { children: string }) => {
-  return <h2 className={styles.modalTitle}>{ children }</h2>;
+  return <h2 className={styles.modalTitle}>{children}</h2>;
 };
 
 const ModalFooter = ({ children }: { children: ReactNode[] }) => {
-  return <footer className={styles.modalFooter}>{ children }</footer>;
+  return <footer className={styles.modalFooter}>{children}</footer>;
 };
 
-const ModalButton = ({ primary, children, ...props }: { primary?: boolean } & ButtonHTMLAttributes<HTMLButtonElement>) => {
+const ModalButton = ({
+  primary,
+  children,
+  ...props
+}: { primary?: boolean } & ButtonHTMLAttributes<HTMLButtonElement>) => {
   const className = `${styles.modalButton}${primary ? ' primary' : ''}`;
-  return <button type="button" className={className} {...props}>{ children }</button>;
+
+  return (
+    <button type="button" className={className} {...props}>
+      {children}
+    </button>
+  );
 };
 
 Modal.Title = ModalTitle;

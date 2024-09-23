@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { MouseEvent, useCallback, useMemo, useRef, useState } from 'react';
 
 import { Item } from '~/components/Item';
 import { Position, Rectangle, ResizeData, Size } from '~/types/item';
@@ -11,13 +11,51 @@ import styles from './Grid.module.css';
 import { itemsMock } from './Grid.mock';
 import { CreateItemsOverlay } from '../CreateItemsOverlay';
 import { useContextMenu } from '~/components/Grid/hooks/use-context-menu';
+import { ContextMenu } from '~/components/ContextMenu/ContextMenu';
+import { MenuItem } from '~/types/ui';
+import { isDefined } from '~/utils/is-defined';
 
 export const Grid = () => {
   const [items, setItems] = useState<Rectangle[]>(itemsMock);
   const [isAddMode, setIsAddMode] = useState(false);
   const previousItems = useRef(items);
   const remove = useRemove();
-  const { activeItem, closeMenu } = useContextMenu(items);
+
+  const modifyItem = useCallback(
+    (itemId: Rectangle['id'], change: Partial<Rectangle>) => {
+      previousItems.current = [...items];
+      setItems((current) => current.map((item) => (item.id === itemId ? { ...item, ...change } : item)));
+    },
+    [items, setItems],
+  );
+
+  const moveItemToFront = useCallback(
+    (_: MouseEvent, itemId: Rectangle['id']) => {
+      const item: Rectangle = items.find((item) => item.id === itemId)!;
+      setItems((current) => [...current.filter((item) => item.id !== itemId), { ...item }]);
+    },
+    [items, setItems],
+  );
+
+  const moveItemToBack = useCallback(
+    (_: MouseEvent, itemId: Rectangle['id']) => {
+      const item: Rectangle = items.find((item) => item.id === itemId)!;
+      setItems((current) => [{ ...item }, ...current.filter((item) => item.id !== itemId)]);
+    },
+    [items, setItems],
+  );
+
+  const changeItemColor = useCallback((_: MouseEvent, _itemId: Rectangle['id']) => {}, []);
+
+  const itemMenuOptions: MenuItem[] = useMemo(
+    () => [
+      { id: 'item-to-top', label: <>Move to front &#x2191;</>, onClick: moveItemToFront.bind(moveItemToFront) },
+      { id: 'item-to-bottom', label: <>Move to back &#x2193;</>, onClick: moveItemToBack.bind(moveItemToBack) },
+      { id: 'item-change-color', label: <>Set color</>, onClick: changeItemColor.bind(changeItemColor) },
+    ],
+    [moveItemToFront, moveItemToBack, changeItemColor],
+  );
+  const { activeItem, menuData, closeMenu } = useContextMenu(items, itemMenuOptions);
 
   const handleRemoveItems = () => {
     setItems((items) => items.filter(({ id }) => !remove.items.includes(id)));
@@ -25,7 +63,7 @@ export const Grid = () => {
   };
 
   const handleRemoveAll = () => {
-    previousItems.current = items;
+    previousItems.current = [...items];
     setItems([]);
   };
 
@@ -33,23 +71,24 @@ export const Grid = () => {
     setItems(previousItems.current);
   };
 
-  const handleMove = (id: Rectangle['id'], position: Position) => {
-    const normalizedPosition = normalizePosition(position);
+  const handleMove = useCallback(
+    (id: Rectangle['id'], position: Position) => {
+      const normalizedPosition = normalizePosition(position);
 
-    previousItems.current = items;
-    setItems((current) => current.map((item) => (item.id === id ? { ...item, ...normalizedPosition } : item)));
-  };
+      modifyItem(id, { ...normalizedPosition });
+    },
+    [modifyItem],
+  );
 
-  const handleResize = (id: Rectangle['id'], resizeData: ResizeData) => {
-    const { width, height, ...position } = resizeData;
-    const normalizedSize: Size = normalizeSize({ width, height });
-    const normalizedPosition = normalizePosition(position);
+  const handleResize = useCallback(
+    (id: Rectangle['id'], { width, height, ...position }: ResizeData) => {
+      const normalizedSize: Size = normalizeSize({ width, height });
+      const normalizedPosition = normalizePosition(position);
 
-    previousItems.current = items;
-    setItems((current) =>
-      current.map((item) => (item.id === id ? { ...item, ...normalizedSize, ...normalizedPosition } : item)),
-    );
-  };
+      modifyItem(id, { ...normalizedSize, ...normalizedPosition });
+    },
+    [modifyItem],
+  );
 
   const handleClick = (id: Rectangle['id']) => {
     if (remove.isOn) {
@@ -65,6 +104,7 @@ export const Grid = () => {
       ...normalizeSize(itemWithoutId),
     };
 
+    previousItems.current = [...items];
     setItems((items) => [...items, normalizedItem]);
   };
 
@@ -80,11 +120,15 @@ export const Grid = () => {
         onDisableAddMode={() => setIsAddMode(false)}
       />
 
-      {items.map((item) => (
-        <Item key={item.id} {...item} onClick={handleClick} onMove={handleMove} onResize={handleResize} />
+      {items.map((item, index) => (
+        <Item key={item.id} layer={index} {...item} onClick={handleClick} onMove={handleMove} onResize={handleResize} />
       ))}
 
       {isAddMode && <CreateItemsOverlay onCreate={handleCreateItem} />}
+
+      {isDefined(activeItem) && menuData && (
+        <ContextMenu options={itemMenuOptions} data={menuData} activeItem={activeItem} onClose={closeMenu} />
+      )}
     </section>
   );
 };

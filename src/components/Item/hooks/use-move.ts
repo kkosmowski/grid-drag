@@ -69,7 +69,7 @@ export const useMove = ({ ref, item, cursor, onStart, onMove }: UseMoveProps) =>
 
       if (ref.current) {
         setStyleProp(ref, '--shadow', 'none');
-        setStyle(ref, 'zIndex', zIndex.item(item.id));
+        setStyle(ref, 'zIndex', '');
         setStyle(ref, 'cursor', '');
       }
     }
