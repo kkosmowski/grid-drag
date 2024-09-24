@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { Item } from '~/components/Item';
 import { Position, Rectangle, ResizeData, Size } from '~/types/item';
@@ -10,6 +10,9 @@ import { normalizePosition, normalizeSize } from '~/utils/normalize';
 import styles from './Grid.module.css';
 import { itemsMock } from './Grid.mock';
 import { CreateItemsOverlay } from '../CreateItemsOverlay';
+import { useItemContextMenu } from '~/components/Grid/hooks/use-item-context-menu';
+import { ContextMenu } from '~/components/ContextMenu/ContextMenu';
+import { getItem } from '~/utils/get-item';
 
 export const Grid = () => {
   const [items, setItems] = useState<Rectangle[]>(itemsMock);
@@ -17,13 +20,46 @@ export const Grid = () => {
   const previousItems = useRef(items);
   const remove = useRemove();
 
+  const modifyItem = useCallback(
+    (itemId: Rectangle['id'], change: Partial<Rectangle>) => {
+      previousItems.current = [...items];
+      setItems((current) => current.map((item) => (item.id === itemId ? { ...item, ...change } : item)));
+    },
+    [items, setItems],
+  );
+
+  const handleColorChange = (itemId: Rectangle['id'], color: string) => {
+    modifyItem(itemId, { color });
+  };
+
+  const handleLayerChange = (itemId: Rectangle['id'], where: -1 | 1) => {
+    const item = getItem(items, itemId);
+
+    if (!item) {
+      console.error('handleLayerChange: no item found.');
+      return;
+    }
+
+    if (where === -1) {
+      setItems((current) => [item, ...current.filter(({ id }) => id !== itemId)]);
+    } else {
+      setItems((current) => [...current.filter(({ id }) => id !== itemId), item]);
+    }
+  };
+
+  const { menuData, options, closeMenu } = useItemContextMenu({
+    items,
+    onColorChange: handleColorChange,
+    onLayerChange: handleLayerChange,
+  });
+
   const handleRemoveItems = () => {
     setItems((items) => items.filter(({ id }) => !remove.items.includes(id)));
     remove.onAfterRemove();
   };
 
   const handleRemoveAll = () => {
-    previousItems.current = items;
+    previousItems.current = [...items];
     setItems([]);
   };
 
@@ -31,23 +67,24 @@ export const Grid = () => {
     setItems(previousItems.current);
   };
 
-  const handleMove = (id: Rectangle['id'], position: Position) => {
-    const normalizedPosition = normalizePosition(position);
+  const handleMove = useCallback(
+    (id: Rectangle['id'], position: Position) => {
+      const normalizedPosition = normalizePosition(position);
 
-    previousItems.current = items;
-    setItems((current) => current.map((item) => (item.id === id ? { ...item, ...normalizedPosition } : item)));
-  };
+      modifyItem(id, { ...normalizedPosition });
+    },
+    [modifyItem],
+  );
 
-  const handleResize = (id: Rectangle['id'], resizeData: ResizeData) => {
-    const { width, height, ...position } = resizeData;
-    const normalizedSize: Size = normalizeSize({ width, height });
-    const normalizedPosition = normalizePosition(position);
+  const handleResize = useCallback(
+    (id: Rectangle['id'], { width, height, ...position }: ResizeData) => {
+      const normalizedSize: Size = normalizeSize({ width, height });
+      const normalizedPosition = normalizePosition(position);
 
-    previousItems.current = items;
-    setItems((current) =>
-      current.map((item) => (item.id === id ? { ...item, ...normalizedSize, ...normalizedPosition } : item)),
-    );
-  };
+      modifyItem(id, { ...normalizedSize, ...normalizedPosition });
+    },
+    [modifyItem],
+  );
 
   const handleClick = (id: Rectangle['id']) => {
     if (remove.isOn) {
@@ -63,6 +100,7 @@ export const Grid = () => {
       ...normalizeSize(itemWithoutId),
     };
 
+    previousItems.current = [...items];
     setItems((items) => [...items, normalizedItem]);
   };
 
@@ -78,11 +116,13 @@ export const Grid = () => {
         onDisableAddMode={() => setIsAddMode(false)}
       />
 
-      {items.map((item) => (
-        <Item key={item.id} {...item} onClick={handleClick} onMove={handleMove} onResize={handleResize} />
+      {items.map((item, index) => (
+        <Item key={item.id} layer={index} {...item} onClick={handleClick} onMove={handleMove} onResize={handleResize} />
       ))}
 
       {isAddMode && <CreateItemsOverlay onCreate={handleCreateItem} />}
+
+      {menuData && <ContextMenu options={options} data={menuData} onClose={closeMenu} />}
     </section>
   );
 };

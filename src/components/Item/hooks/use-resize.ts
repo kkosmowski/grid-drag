@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { setStyleProp } from '~/utils/set-style-prop';
 import { setStyle } from '~/utils/set-style';
 import { createResizeMap } from '~/components/Item/hooks/use-resize.utils';
-import { HOLD_TIME_MS } from '~/consts';
+import { HOLD_TIME_MS, zIndex } from '~/consts';
 
 type UseResizeProps = {
   ref: ItemRef;
@@ -55,7 +55,7 @@ export const useResize = ({ ref, item, cursor, onStart, onResize }: UseResizePro
         const { width, height } = item;
 
         setStyleProp(ref, '--resize', 'block');
-        setStyle(ref, 'z-index', '10000');
+        setStyle(ref, 'zIndex', zIndex.draggedItem);
         setResize({ x: 0, y: 0, width, height });
       }
     }, HOLD_TIME_MS);
@@ -79,12 +79,12 @@ export const useResize = ({ ref, item, cursor, onStart, onResize }: UseResizePro
       };
 
       onResize(item.id, absoluteResizeData);
-    }
-    clear();
+      clear();
 
-    if (ref.current) {
-      setStyleProp(ref, '--resize', 'none');
-      setStyle(ref, 'z-index', '');
+      if (ref.current) {
+        setStyleProp(ref, '--resize', 'none');
+        setStyle(ref, 'zIndex', '');
+      }
     }
   };
 

@@ -1,4 +1,5 @@
-import { Rectangle } from '~/types/item';
+import { type Position, Rectangle } from '~/types/item';
+import { MouseEvent, ReactNode } from 'react';
 
 export type RemoveProps = {
   items: Rectangle['id'][];
@@ -11,3 +12,14 @@ export type RemoveProps = {
 
 export type Color = 'regular' | 'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'error';
 export type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
+export type MenuData = Position & {
+  transformX: 'left' | 'right';
+  transformY: 'top' | 'bottom';
+};
+
+export type MenuItem = {
+  id: string;
+  label: ReactNode;
+  onClick?: (event: MouseEvent) => void;
+};
