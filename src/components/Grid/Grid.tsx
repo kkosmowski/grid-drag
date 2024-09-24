@@ -9,8 +9,8 @@ import { useRemove } from '~/contexts/RemoveItemsContext';
 import { normalizePosition, normalizeSize } from '~/utils/normalize';
 import styles from './Grid.module.css';
 import { CreateItemsOverlay } from '../CreateItemsOverlay';
-import { useItemContextMenu } from '~/components/Grid/hooks/use-item-context-menu';
-import { ContextMenu } from '~/components/ContextMenu/ContextMenu';
+import { useItemContextMenu } from './hooks/use-item-context-menu';
+import { ContextMenu } from '~/components/ContextMenu';
 import { getItem } from '~/utils/get-item';
 import { useStorage } from '~/hooks/use-storage';
 

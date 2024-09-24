@@ -6,15 +6,18 @@ import 'material-icons/iconfont/filled.css';
 import 'material-icons/iconfont/outlined.css';
 import { Toaster } from '~/contexts/Toaster';
 import { StorageProvider } from '~/contexts/StorageContext';
+import { SettingsProvider } from '~/contexts/SettingsContext';
 
 const rootElement = document.getElementById('root')!;
 
 createRoot(rootElement).render(
   <StrictMode>
     <StorageProvider>
-      <Toaster>
-        <App />
-      </Toaster>
+      <SettingsProvider>
+        <Toaster>
+          <App />
+        </Toaster>
+      </SettingsProvider>
     </StorageProvider>
   </StrictMode>,
 );

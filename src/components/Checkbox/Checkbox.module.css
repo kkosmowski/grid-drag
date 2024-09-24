@@ -1,0 +1,38 @@
+.checkbox:global(.sm) {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+}
+
+.checkbox:global(.md) {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+}
+
+.checkbox:global(.lg) {
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+}
+
+.checkbox {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    appearance: none;
+    font-family: 'Material Icons';
+    margin: 0;
+    -webkit-font-smoothing: subpixel-antialiased;
+    font-smoothing: subpixel-antialiased;
+}
+
+.checkbox::after {
+    content: 'check_box_outline_blank';
+    color: var(--regular-500);
+}
+
+.checkbox:checked::after {
+    content: 'check_box';
+    color: var(--primary-500);
+}

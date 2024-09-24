@@ -10,6 +10,9 @@ import { useToast } from '~/hooks/use-toast';
 import { ToastData } from '~/contexts/Toaster';
 import { stopPropagation } from '~/utils/stop-propagation';
 import { zIndex } from '~/consts';
+import { useSettings } from '~/hooks/use-settings';
+import { Menu } from '~/components/Menu';
+import { useToggle } from '~/hooks/use-toggle';
 
 type FloatingUIProps = {
   isAddMode: boolean;
@@ -30,11 +33,13 @@ export const FloatingUI = (props: FloatingUIProps) => {
     props;
   const [isRemoveAllModalOpen, setIsRemoveAllModalOpen] = useState(false);
   const [wasRemoveAllJustDone, setWasRemoveAllJustDone] = useState(false);
+  const [menuOpen, toggleMenu] = useToggle(false);
   const [undoTimeLeft, setUndoTimeLeft] = useState(DEFAULT_UNDO_TIME_S);
   const removeAllUndoTimeout = useRef<number | null>(null);
   const removeAllUndoInterval = useRef<number | null>(null);
   const remove = useRemove();
   const { toast, hideToast } = useToast();
+  const { options } = useSettings();
   const toastRef = useRef<ToastData['id'] | null>(null);
 
   const tryRemoveAll = () => {
@@ -116,6 +121,14 @@ export const FloatingUI = (props: FloatingUIProps) => {
           onClick={tryRemoveAll}
         />
       )}
+
+      <Menu
+        open={menuOpen}
+        button={{ iconName: 'settings' }}
+        options={options}
+        onOpen={toggleMenu}
+        onClose={toggleMenu}
+      />
 
       <RemoveAllModal open={isRemoveAllModalOpen} onCancel={handleCancel} onConfirm={handleConfirm} />
     </header>

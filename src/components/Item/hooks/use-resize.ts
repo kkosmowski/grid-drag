@@ -2,8 +2,10 @@ import type { Cursor, ItemRef, Rectangle, ResizeData } from '~/types/item';
 import { useEffect, useRef } from 'react';
 import { setStyleProp } from '~/utils/set-style-prop';
 import { setStyle } from '~/utils/set-style';
-import { createResizeMap } from '~/components/Item/hooks/use-resize.utils';
+import { createResizeMap } from './use-resize.utils';
 import { HOLD_TIME_MS, zIndex } from '~/consts';
+import { useSettings } from '~/hooks/use-settings';
+import { getNewPosition } from '~/utils/get-new-position';
 
 type UseResizeProps = {
   ref: ItemRef;
@@ -14,6 +16,7 @@ type UseResizeProps = {
 };
 
 export const useResize = ({ ref, item, cursor, onStart, onResize }: UseResizeProps) => {
+  const settings = useSettings();
   const canBeResized = cursor !== null;
   const isResizing = useRef(false);
   const clickTimeout = useRef<number | null>(null);
@@ -63,7 +66,8 @@ export const useResize = ({ ref, item, cursor, onStart, onResize }: UseResizePro
 
   const onResizeDrag = ({ clientX, clientY }: MouseEvent) => {
     if (isResizing.current && cursor) {
-      setResize(resizeMap(clientX, clientY)[cursor]);
+      const { x, y } = getNewPosition(clientX, clientY, settings.isPreviewSnapped);
+      setResize(resizeMap(x, y)[cursor]);
     }
   };
 

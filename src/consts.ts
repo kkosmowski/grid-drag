@@ -19,6 +19,7 @@ export const zIndex = {
   item: (id: Rectangle['id']) => Math.min(id, maxZIndex),
   temporaryItem: maxZIndex - 101,
   draggedItem: maxZIndex - 100,
+  createOverlay: maxZIndex - 11,
   ui: maxZIndex - 10,
   backdrop: maxZIndex - 1,
   popover: maxZIndex,
