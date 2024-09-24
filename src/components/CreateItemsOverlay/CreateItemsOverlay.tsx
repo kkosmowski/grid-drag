@@ -5,7 +5,7 @@ import { Rectangle, TemporaryRectangle } from '~/types/item';
 import styles from './CrateItemsOverlay.module.css';
 import { ItemOutline } from '~/components/ItemOutline';
 import { normalizePosition } from '~/utils/normalize';
-import { MIN_ACCEPTABLE_SIZE_TO_CREATE } from '~/consts';
+import { MIN_ACCEPTABLE_SIZE_TO_CREATE, zIndex } from '~/consts';
 import { mapOutlineToRectangle } from '~/utils/map-outline-to-rectangle';
 import { useSettings } from '~/hooks/use-settings';
 import { getNewPosition } from '~/utils/get-new-position';
@@ -59,6 +59,7 @@ export const CreateItemsOverlay = ({ onCreate }: CreateItemsOverlayProps) => {
 
   return (
     <div
+      style={{ zIndex: zIndex.createOverlay }}
       className={styles.createItemsOverlay}
       onMouseDown={startCreatingItem}
       onMouseMove={updateItem}

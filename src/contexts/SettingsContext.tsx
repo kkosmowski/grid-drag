@@ -1,6 +1,12 @@
-import { createContext, ReactNode, useMemo } from 'react';
+import { createContext, ReactNode, useEffect, useMemo } from 'react';
 import { useToggle } from '~/hooks/use-toggle';
 import { MenuItem } from '~/types/ui';
+import { Storage } from '~/utils/storage';
+
+type StorageSettingItem = {
+  id: 'preview-snapped';
+  value: boolean;
+};
 
 type SettingsContextType = {
   isPreviewSnapped: boolean;
@@ -19,7 +25,14 @@ export type SettingsProviderProps = {
 };
 
 export const SettingsProvider = ({ children }: SettingsProviderProps) => {
-  const [isPreviewSnapped, toggleSnapPreview] = useToggle(false);
+  const storage = new Storage('kko-grid-drag-settings');
+  const [isPreviewSnapped, toggleSnapPreview] = useToggle(
+    storage.get<StorageSettingItem>('preview-snapped')?.value ?? false,
+  );
+
+  useEffect(() => {
+    storage.update('preview-snapped', { value: isPreviewSnapped }, true);
+  }, [isPreviewSnapped]);
 
   const options: MenuItem[] = useMemo(
     () => [

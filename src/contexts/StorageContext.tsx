@@ -30,7 +30,7 @@ export type StorageProviderProps = {
 };
 
 export const StorageProvider = ({ children }: StorageProviderProps) => {
-  const storage = new Storage();
+  const storage = new Storage('kko-grid-drag-items');
 
   const get = useCallback((id: Rectangle['id']) => {
     return storage.get<Rectangle>(id);

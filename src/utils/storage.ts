@@ -1,5 +1,9 @@
 export class Storage {
-  private itemsKey = 'kko-grid-drag-items';
+  private itemsKey;
+
+  constructor(key: string) {
+    this.itemsKey = key;
+  }
 
   add<T extends { id: string | number }>(item: T): T[] {
     const items = this.read<T>();
@@ -22,15 +26,15 @@ export class Storage {
     return items;
   }
 
-  update<T extends { id: string | number }>(id: T['id'], changes: Partial<Omit<T, 'id'>>): T[] {
+  update<T extends { id: string | number }>(id: T['id'], changes: Partial<Omit<T, 'id'>>, force = false): T[] {
     const items = this.read<T>();
 
-    if (!items) {
+    if (!items && !force) {
       console.error('Storage: Trying to update item in a non-existent storage.');
       return [];
     }
 
-    const newItems = items.map((i) => (i.id === id ? { ...i, ...changes } : i));
+    const newItems = items ? items.map((i) => (i.id === id ? { ...i, ...changes } : i)) : ([{ id, ...changes }] as T[]);
 
     this.write(newItems);
     return newItems;
