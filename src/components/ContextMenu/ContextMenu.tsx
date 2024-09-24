@@ -31,7 +31,7 @@ export const ContextMenu = ({ options, data, onClose }: ContextMenuProps) => {
     <>
       <menu className={styles.contextMenu} style={style}>
         {options.map((menuItem) => (
-          <li key={menuItem.id} onClick={menuItem.onClick}>
+          <li key={menuItem.id} className={styles.menuItem} onClick={menuItem.onClick}>
             {menuItem.label}
           </li>
         ))}

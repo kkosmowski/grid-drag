@@ -1,6 +1,6 @@
 import type { Rectangle } from '~/types/item';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { MENU_MARGIN, MENU_WIDTH } from '~/consts';
+import { MENU_ITEM_HEIGHT, MENU_MARGIN, MENU_WIDTH } from '~/consts';
 import { MenuData, MenuItem } from '~/types/ui';
 import { getItem } from '~/utils/get-item';
 import { ColorPicker } from '~/components/ColorPicker/ColorPicker';
@@ -28,7 +28,7 @@ const wasItemClicked = (item: Rectangle, { clientX, clientY }: Pick<MouseEvent, 
 
 const getMenuData = ({ clientX, clientY }: MouseEvent, optionsCount: number): MenuData => {
   const xLimit = window.innerWidth - (MENU_WIDTH + MENU_MARGIN);
-  const yLimit = window.innerHeight - (optionsCount * MENU_WIDTH + MENU_MARGIN);
+  const yLimit = window.innerHeight - (optionsCount * MENU_ITEM_HEIGHT + MENU_MARGIN);
 
   const transformX = clientX > xLimit ? 'right' : 'left';
   const transformY = clientY > yLimit ? 'top' : 'bottom';

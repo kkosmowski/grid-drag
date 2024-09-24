@@ -1,5 +1,7 @@
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 
+import styles from './ColorPicker.module.css';
+
 type ColorPickerProps = {
   initialValue: string;
   onChange?: (color: string) => void;
@@ -26,5 +28,13 @@ export const ColorPicker = ({ initialValue, onChange, onBlur }: ColorPickerProps
     onBlur?.(value);
   }, [value, onBlur]);
 
-  return <input type="color" value={value} onChange={handleChange} onBlur={() => handleBlur()} />;
+  return (
+    <input
+      type="color"
+      value={value}
+      className={styles.colorPicker}
+      onChange={handleChange}
+      onBlur={() => handleBlur()}
+    />
+  );
 };
