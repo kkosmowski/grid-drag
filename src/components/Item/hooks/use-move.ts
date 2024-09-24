@@ -3,6 +3,8 @@ import { useEffect, useRef } from 'react';
 import { setStyle } from '~/utils/set-style';
 import { setStyleProp } from '~/utils/set-style-prop';
 import { HOLD_TIME_MS, zIndex } from '~/consts';
+import { useSettings } from '~/hooks/use-settings';
+import { getNewPosition } from '~/utils/get-new-position';
 
 type UseMoveProps = {
   ref: ItemRef;
@@ -15,6 +17,7 @@ type UseMoveProps = {
 const defaultInnerPosition: Position = { x: 0, y: 0 };
 
 export const useMove = ({ ref, item, cursor, onStart, onMove }: UseMoveProps) => {
+  const settings = useSettings();
   const canBeMoved = cursor === null;
   const isDragging = useRef(false);
   const innerPosition = useRef<Position>(defaultInnerPosition);
@@ -56,8 +59,13 @@ export const useMove = ({ ref, item, cursor, onStart, onMove }: UseMoveProps) =>
 
   const onDrag = ({ clientX, clientY }: MouseEvent) => {
     if (isDragging.current) {
-      setStyle(ref, 'left', clientX - innerPosition.current.x + 'px');
-      setStyle(ref, 'top', clientY - innerPosition.current.y + 'px');
+      const { x, y } = getNewPosition(
+        clientX - innerPosition.current.x,
+        clientY - innerPosition.current.y,
+        settings.isPreviewSnapped,
+      );
+      setStyle(ref, 'left', x + 'px');
+      setStyle(ref, 'top', y + 'px');
     }
   };
   const onDragEnd = ({ clientX, clientY }: MouseEvent) => {

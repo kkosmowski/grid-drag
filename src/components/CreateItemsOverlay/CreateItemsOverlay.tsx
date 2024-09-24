@@ -7,6 +7,8 @@ import { ItemOutline } from '~/components/ItemOutline';
 import { normalizePosition } from '~/utils/normalize';
 import { MIN_ACCEPTABLE_SIZE_TO_CREATE } from '~/consts';
 import { mapOutlineToRectangle } from '~/utils/map-outline-to-rectangle';
+import { useSettings } from '~/hooks/use-settings';
+import { getNewPosition } from '~/utils/get-new-position';
 
 type CreateItemsOverlayProps = {
   onCreate: (itemWithoutId: Omit<Rectangle, 'id'>) => void;
@@ -14,6 +16,7 @@ type CreateItemsOverlayProps = {
 
 export const CreateItemsOverlay = ({ onCreate }: CreateItemsOverlayProps) => {
   const [temp, setTemp] = useState<TemporaryRectangle | null>(null);
+  const settings = useSettings();
 
   const startCreatingItem = (e: MouseEvent) => {
     const { x, y } = normalizePosition({ x: e.clientX, y: e.clientY });
@@ -22,11 +25,10 @@ export const CreateItemsOverlay = ({ onCreate }: CreateItemsOverlayProps) => {
 
   const updateItem = (e: MouseEvent) => {
     if (temp) {
-      setTemp((item) => ({
-        ...item!,
-        x1: e.clientX,
-        y1: e.clientY,
-      }));
+      setTemp((item) => {
+        const { x: x1, y: y1 } = getNewPosition(e.clientX, e.clientY, settings.isPreviewSnapped);
+        return { ...item!, x1, y1 };
+      });
     }
   };
 
