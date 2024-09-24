@@ -82,7 +82,6 @@ export const FloatingUI = (props: FloatingUIProps) => {
       toastRef.current = toast('Click and drag anywhere to create items.', {
         persistent: true,
         preventClose: true,
-        preventPoint: true,
       });
       onEnableAddMode();
     }

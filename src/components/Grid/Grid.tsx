@@ -8,14 +8,15 @@ import { useRemove } from '~/contexts/RemoveItemsContext';
 
 import { normalizePosition, normalizeSize } from '~/utils/normalize';
 import styles from './Grid.module.css';
-import { itemsMock } from './Grid.mock';
 import { CreateItemsOverlay } from '../CreateItemsOverlay';
 import { useItemContextMenu } from '~/components/Grid/hooks/use-item-context-menu';
 import { ContextMenu } from '~/components/ContextMenu/ContextMenu';
 import { getItem } from '~/utils/get-item';
+import { useStorage } from '~/hooks/use-storage';
 
 export const Grid = () => {
-  const [items, setItems] = useState<Rectangle[]>(itemsMock);
+  const storage = useStorage();
+  const [items, setItems] = useState(storage.getAll());
   const [isAddMode, setIsAddMode] = useState(false);
   const previousItems = useRef(items);
   const remove = useRemove();
@@ -23,9 +24,9 @@ export const Grid = () => {
   const modifyItem = useCallback(
     (itemId: Rectangle['id'], change: Partial<Rectangle>) => {
       previousItems.current = [...items];
-      setItems((current) => current.map((item) => (item.id === itemId ? { ...item, ...change } : item)));
+      setItems(storage.patch(itemId, { ...change }));
     },
-    [items, setItems],
+    [items, storage.patch],
   );
 
   const handleColorChange = (itemId: Rectangle['id'], color: string) => {
@@ -40,11 +41,10 @@ export const Grid = () => {
       return;
     }
 
-    if (where === -1) {
-      setItems((current) => [item, ...current.filter(({ id }) => id !== itemId)]);
-    } else {
-      setItems((current) => [...current.filter(({ id }) => id !== itemId), item]);
-    }
+    setItems((current) => {
+      const filtered = current.filter(({ id }) => id !== itemId);
+      return storage.setAll(where === -1 ? [item, ...filtered] : [...filtered, item]);
+    });
   };
 
   const { menuData, options, closeMenu } = useItemContextMenu({
@@ -54,17 +54,18 @@ export const Grid = () => {
   });
 
   const handleRemoveItems = () => {
-    setItems((items) => items.filter(({ id }) => !remove.items.includes(id)));
+    setItems(storage.remove(remove.items));
     remove.onAfterRemove();
   };
 
   const handleRemoveAll = () => {
     previousItems.current = [...items];
-    setItems([]);
+    setItems(storage.removeAll());
   };
 
   const handleUndoRemoveAll = () => {
-    setItems(previousItems.current);
+    previousItems.current = [];
+    setItems(storage.setAll(previousItems.current));
   };
 
   const handleMove = useCallback(
@@ -101,7 +102,7 @@ export const Grid = () => {
     };
 
     previousItems.current = [...items];
-    setItems((items) => [...items, normalizedItem]);
+    setItems(storage.add(normalizedItem));
   };
 
   return (
