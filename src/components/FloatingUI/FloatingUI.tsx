@@ -39,7 +39,7 @@ export const FloatingUI = (props: FloatingUIProps) => {
   const removeAllUndoInterval = useRef<number | null>(null);
   const remove = useRemove();
   const { toast, hideToast } = useToast();
-  const { isPreviewSnapped, toggleSnapPreview } = useSettings();
+  const { options } = useSettings();
   const toastRef = useRef<ToastData['id'] | null>(null);
 
   const tryRemoveAll = () => {
@@ -125,7 +125,7 @@ export const FloatingUI = (props: FloatingUIProps) => {
       <Menu
         open={menuOpen}
         button={{ iconName: 'settings' }}
-        options={[{ id: 'a', label: 'aa' }]}
+        options={options}
         onOpen={toggleMenu}
         onClose={toggleMenu}
       />
