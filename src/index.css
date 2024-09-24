@@ -19,6 +19,14 @@
   --icon-md-size: 24px;
   --icon-lg-size: 28px;
   --icon-xl-size: 32px;
+
+  --primary-300: #67b4f3;
+  --primary-400: #3a98e3;
+  --primary-500: #1984da;
+
+  --regular-300: #b9b1b1;
+  --regular-400: #a49b9b;
+  --regular-500: #8d8383;
 }
 
 html {
@@ -64,15 +72,15 @@ button.sm {
 }
 
 button.regular {
-  background-color: #8d8383;
+  background-color: var(--regular-500);
 }
 
 button.regular:hover {
-  background-color: #a49b9b;
+  background-color: var(--regular-400);
 }
 
 button.regular:active {
-  background-color: #b9b1b1;
+  background-color: var(--regular-300);
 }
 
 button.regular:disabled {
@@ -80,15 +88,15 @@ button.regular:disabled {
 }
 
 button.primary {
-  background-color: #1984da;
+  background-color: var(--primary-500);
 }
 
 button.primary:hover {
-  background-color: #3a98e3;
+  background-color: var(--primary-400);
 }
 
 button.primary:active {
-  background-color: #67b4f3;
+  background-color: var(--primary-300);
 }
 
 button.primary:disabled {

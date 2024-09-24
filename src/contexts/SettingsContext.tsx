@@ -2,6 +2,7 @@ import { createContext, ReactNode, useEffect, useMemo } from 'react';
 import { useToggle } from '~/hooks/use-toggle';
 import { MenuItem } from '~/types/ui';
 import { Storage } from '~/utils/storage';
+import { Checkbox } from '~/components/Checkbox';
 
 type StorageSettingItem = {
   id: 'preview-snapped';
@@ -40,7 +41,7 @@ export const SettingsProvider = ({ children }: SettingsProviderProps) => {
         id: 'preview-snapped',
         label: (
           <>
-            <span>Preview snapped</span> <input type="checkbox" checked={isPreviewSnapped} onChange={() => {}} />
+            <span>Preview snapped</span> <Checkbox checked={isPreviewSnapped} onChange={() => {}} />
           </>
         ),
         onClick: () => toggleSnapPreview(),

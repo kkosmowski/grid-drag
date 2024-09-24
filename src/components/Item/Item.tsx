@@ -4,8 +4,8 @@ import { Position, Rectangle, ResizeData } from '~/types/item';
 
 import styles from './Item.module.css';
 import { useEdges } from './hooks/use-edges';
-import { useResize } from '~/components/Item/hooks/use-resize';
-import { useMove } from '~/components/Item/hooks/use-move';
+import { useResize } from './hooks/use-resize';
+import { useMove } from './hooks/use-move';
 import { useRemove } from '~/contexts/RemoveItemsContext';
 import { setStyle } from '~/utils/set-style';
 import { setStyles } from '~/utils/set-styles';
