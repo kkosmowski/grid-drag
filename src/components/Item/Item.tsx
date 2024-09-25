@@ -1,11 +1,11 @@
 import { useEffect, useRef } from 'react';
 
-import { Position, Rectangle, ResizeData } from '~/types/item';
-
 import styles from './Item.module.css';
 import { useEdges } from './hooks/use-edges';
 import { useResize } from './hooks/use-resize';
 import { useMove } from './hooks/use-move';
+
+import type { Position, Rectangle, ResizeData } from '~/types/item';
 import { useRemove } from '~/contexts/RemoveItemsContext';
 import { setStyle } from '~/utils/set-style';
 import { setStyles } from '~/utils/set-styles';

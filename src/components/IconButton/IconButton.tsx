@@ -1,6 +1,11 @@
-import { Button, ButtonProps } from '../Button';
-import { Icon, IconProps } from '~/components/Icon';
-import { ForwardedRef, forwardRef } from 'react';
+import type { ForwardedRef } from 'react';
+import { forwardRef } from 'react';
+
+import type { ButtonProps } from '../Button';
+import { Button } from '../Button';
+
+import type { IconProps } from '~/components/Icon';
+import { Icon } from '~/components/Icon';
 
 export type IconButtonProps = Omit<ButtonProps, 'children'> & {
   name: IconProps['name'];

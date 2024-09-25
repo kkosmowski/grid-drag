@@ -1,1 +1,1 @@
-export { Item } from './Item.tsx';
+export { Item } from './Item';

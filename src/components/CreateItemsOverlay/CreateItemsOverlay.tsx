@@ -1,16 +1,16 @@
-import { MouseEvent, useEffect, useState } from 'react';
-
-import { Rectangle, TemporaryRectangle } from '~/types/item';
+import type { MouseEvent } from 'react';
+import { useEffect, useState } from 'react';
 
 import styles from './CrateItemsOverlay.module.css';
+import { toSquare } from './CreateItemsOverlay.utils';
+
+import type { Rectangle, TemporaryRectangle } from '~/types/item';
 import { ItemOutline } from '~/components/ItemOutline';
 import { normalizePosition } from '~/utils/normalize';
 import { MIN_ACCEPTABLE_SIZE_TO_CREATE, zIndex } from '~/consts';
 import { mapOutlineToRectangle } from '~/utils/map-outline-to-rectangle';
 import { useSettings } from '~/hooks/use-settings';
 import { getNewPosition } from '~/utils/get-new-position';
-
-import { toSquare } from './CreateItemsOverlay.utils';
 
 type CreateItemsOverlayProps = {
   onCreate: (itemWithoutId: Omit<Rectangle, 'id'>) => void;

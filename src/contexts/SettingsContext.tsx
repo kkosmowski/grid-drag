@@ -1,6 +1,8 @@
-import { createContext, ReactNode, useEffect, useMemo } from 'react';
+import type { ReactNode } from 'react';
+import { createContext, useEffect, useMemo } from 'react';
+
 import { useToggle } from '~/hooks/use-toggle';
-import { MenuItem } from '~/types/ui';
+import type { MenuItem } from '~/types/ui';
 import { Storage } from '~/utils/storage';
 import { Checkbox } from '~/components/Checkbox';
 

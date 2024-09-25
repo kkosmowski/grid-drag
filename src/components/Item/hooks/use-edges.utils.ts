@@ -6,7 +6,7 @@ export const getCornerCursor = ({ isLTC, isLBC, isRTC, isRBC }: ItemCorners): Co
   if (isRTC) return CornerCursor.RightTop;
   if (isRBC) return CornerCursor.RightBottom;
   return null;
-}
+};
 
 export const getEdgeCursor = ({ isLE, isRE, isTE, isBE }: ItemEdges): EdgeCursor | null => {
   if (isLE) return EdgeCursor.Left;
@@ -14,4 +14,4 @@ export const getEdgeCursor = ({ isLE, isRE, isTE, isBE }: ItemEdges): EdgeCursor
   if (isTE) return EdgeCursor.Top;
   if (isBE) return EdgeCursor.Bottom;
   return null;
-}
+};

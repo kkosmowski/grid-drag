@@ -1,5 +1,3 @@
-import React from 'react';
-
 import type { RowProps } from './Row.types';
 import styles from './Row.module.css';
 

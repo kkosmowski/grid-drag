@@ -1,7 +1,8 @@
-import type { Rectangle } from '~/types/item';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import type { Rectangle } from '~/types/item';
 import { MENU_ITEM_HEIGHT, MENU_MARGIN, MENU_WIDTH } from '~/consts';
-import { MenuData, MenuItem } from '~/types/ui';
+import type { MenuData, MenuItem } from '~/types/ui';
 import { getItem } from '~/utils/get-item';
 import { ColorPicker } from '~/components/ColorPicker/ColorPicker';
 import { isDefined } from '~/utils/is-defined';
@@ -41,6 +42,11 @@ export const useItemContextMenu = (args: UseItemContextMenuReturnArgs): UseItemC
   const [activeItem, setActiveItem] = useState<UseItemContextMenuReturnValue['activeItem']>(null);
   const [menuData, setMenuData] = useState<UseItemContextMenuReturnValue['menuData']>(null);
 
+  const closeMenu = useCallback(() => {
+    setActiveItem(null);
+    setMenuData(null);
+  }, [setActiveItem, setMenuData]);
+
   const moveItemToFront = useCallback(() => {
     if (!isDefined(activeItem)) {
       console.error('moveItemToFront: function called, but activeItem is null.');
@@ -49,7 +55,7 @@ export const useItemContextMenu = (args: UseItemContextMenuReturnArgs): UseItemC
 
     onLayerChange(activeItem, 1);
     closeMenu();
-  }, [activeItem, items, onLayerChange]);
+  }, [activeItem, closeMenu, onLayerChange]);
 
   const moveItemToBack = useCallback(() => {
     if (!isDefined(activeItem)) {
@@ -59,7 +65,7 @@ export const useItemContextMenu = (args: UseItemContextMenuReturnArgs): UseItemC
 
     onLayerChange(activeItem, -1);
     closeMenu();
-  }, [activeItem, onLayerChange]);
+  }, [activeItem, closeMenu, onLayerChange]);
 
   const changeItemColor = useCallback(
     (color: string) => {
@@ -71,7 +77,7 @@ export const useItemContextMenu = (args: UseItemContextMenuReturnArgs): UseItemC
       onColorChange(activeItem, color);
       closeMenu();
     },
-    [activeItem, onColorChange],
+    [activeItem, closeMenu, onColorChange],
   );
 
   const options: MenuItem[] = useMemo(() => {
@@ -89,10 +95,13 @@ export const useItemContextMenu = (args: UseItemContextMenuReturnArgs): UseItemC
     ];
   }, [activeItem, items, moveItemToFront, moveItemToBack, changeItemColor]);
 
-  const openMenu = (e: MouseEvent, itemId: Rectangle['id']) => {
-    setActiveItem(itemId);
-    setMenuData(getMenuData(e, options.length));
-  };
+  const openMenu = useCallback(
+    (e: MouseEvent, itemId: Rectangle['id']) => {
+      setActiveItem(itemId);
+      setMenuData(getMenuData(e, options.length));
+    },
+    [options.length],
+  );
 
   const tryToOpenMenu = useCallback(
     (e: MouseEvent) => {
@@ -110,13 +119,8 @@ export const useItemContextMenu = (args: UseItemContextMenuReturnArgs): UseItemC
         openMenu(e, clickedItems[0].id);
       }
     },
-    [setActiveItem, items],
+    [items, openMenu],
   );
-
-  const closeMenu = useCallback(() => {
-    setActiveItem(null);
-    setMenuData(null);
-  }, [setActiveItem, setMenuData]);
 
   useEffect(() => {
     window.addEventListener('contextmenu', tryToOpenMenu);
@@ -124,7 +128,7 @@ export const useItemContextMenu = (args: UseItemContextMenuReturnArgs): UseItemC
     return () => {
       window.removeEventListener('contextmenu', tryToOpenMenu);
     };
-  }, [items]);
+  }, [items, tryToOpenMenu]);
 
   return { activeItem, menuData, options, closeMenu };
 };

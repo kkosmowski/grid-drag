@@ -1,6 +1,6 @@
-import { MenuData, MenuItem } from '~/types/ui';
-
 import { Menu } from '../Menu';
+
+import type { MenuData, MenuItem } from '~/types/ui';
 
 type ContextMenuProps = {
   data: MenuData;

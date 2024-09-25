@@ -1,9 +1,10 @@
 import { useRef } from 'react';
 
 import styles from './FloatingUI.module.css';
+
 import { useRemove } from '~/contexts/RemoveItemsContext';
 import { useToast } from '~/hooks/use-toast';
-import { ToastData } from '~/contexts/Toaster';
+import type { ToastData } from '~/contexts/Toaster';
 import { stopPropagation } from '~/utils/stop-propagation';
 import { zIndex } from '~/consts';
 import { useSettings } from '~/hooks/use-settings';

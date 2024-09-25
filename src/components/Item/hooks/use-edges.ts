@@ -1,9 +1,10 @@
-import { MutableRefObject, useCallback, useEffect, useState } from 'react';
+import type { MutableRefObject } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { Cursor, ItemCorners, ItemEdges, ItemRef, Rectangle } from '~/types/item';
-
 import { getCornerCursor, getEdgeCursor } from './use-edges.utils';
+
+import type { Cursor, ItemCorners, ItemEdges, ItemRef, Rectangle } from '~/types/item';
 import { setStyle } from '~/utils/set-style';
 import { isBottomEdge, isLeftEdge, isRightEdge, isTopEdge } from '~/utils/edges-and-corners';
 
@@ -48,7 +49,7 @@ export const useEdges = (ref: ItemRef, item: Rectangle, freezeCursor: MutableRef
         setStyle(ref, 'cursor', '');
       }, LISTEN_DEBOUNCE);
     }
-  }, [setCursor]);
+  }, [freezeCursor, ref]);
 
   useEffect(() => {
     if (ref.current) {
@@ -56,10 +57,12 @@ export const useEdges = (ref: ItemRef, item: Rectangle, freezeCursor: MutableRef
       ref.current!.addEventListener('mouseleave', resetCursor);
     }
 
+    const itemRef = ref.current;
+
     return () => {
-      if (ref.current) {
-        ref.current!.removeEventListener('mousemove', edgeListener);
-        ref.current!.removeEventListener('mouseleave', resetCursor);
+      if (itemRef) {
+        itemRef.removeEventListener('mousemove', edgeListener);
+        itemRef.removeEventListener('mouseleave', resetCursor);
       }
     };
   }, [ref.current]);

@@ -6,5 +6,5 @@ export const App = () => {
     <RemoveItemsContextController>
       <Grid />
     </RemoveItemsContextController>
-  )
-}
+  );
+};

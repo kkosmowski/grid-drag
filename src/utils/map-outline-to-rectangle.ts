@@ -1,4 +1,4 @@
-import { Rectangle, TemporaryRectangle } from '~/types/item';
+import type { Rectangle, TemporaryRectangle } from '~/types/item';
 
 export const mapOutlineToRectangle = (outline: TemporaryRectangle): Omit<Rectangle, 'id' | 'color'> => ({
   x: Math.min(outline.x0, outline.x1),

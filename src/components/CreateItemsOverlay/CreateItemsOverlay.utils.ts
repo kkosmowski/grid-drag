@@ -1,4 +1,4 @@
-import { TemporaryRectangle } from '~/types/item';
+import type { TemporaryRectangle } from '~/types/item';
 
 const getMin = (x0: number, y0: number, x1: number, y1: number): number => {
   const width = Math.abs(x0 - x1);

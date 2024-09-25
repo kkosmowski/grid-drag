@@ -1,4 +1,5 @@
-import { CornerCursor, Cursor, EdgeCursor, Position, Rectangle, ResizeData } from '~/types/item';
+import type { Cursor, Position, Rectangle, ResizeData } from '~/types/item';
+import { CornerCursor, EdgeCursor } from '~/types/item';
 import { MIN_SIZE } from '~/consts';
 
 type CreateResizeMapArgs = {
