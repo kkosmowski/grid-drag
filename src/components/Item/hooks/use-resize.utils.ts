@@ -1,4 +1,4 @@
-import { CornerCursor, Cursor, EdgeCursor, Rectangle, ResizeData } from '~/types/item';
+import { CornerCursor, Cursor, EdgeCursor, Position, Rectangle, ResizeData } from '~/types/item';
 import { MIN_SIZE } from '~/consts';
 
 type CreateResizeMapArgs = {
@@ -13,40 +13,41 @@ type ResizeMap = Record<Cursor, ResizeData>;
 type HorizontalResizeData = Pick<ResizeData, 'x' | 'width'>;
 type VerticalResizeData = Pick<ResizeData, 'y' | 'height'>;
 
+const squared = (data: ResizeData): { min: number } & Position => {
+  const min = Math.min(data.width, data.height);
+  const diff = Math.abs(data.width - data.height);
+  const x = data.width > data.height ? data.x + diff : data.x;
+  const y = data.height > data.width ? data.y + diff : data.y;
+
+  return { min, x, y };
+};
+
 const ltSquared = (data: ResizeData, isSquare: boolean): ResizeData => {
   if (!isSquare) return data;
 
-  const min = Math.min(data.width, data.height);
-  const maxXY = Math.max(data.x, data.y);
-
-  return { x: maxXY, y: maxXY, width: min, height: min };
+  const { x, y, min } = squared(data);
+  return { x, y, width: min, height: min };
 };
 
 const rtSquared = (data: ResizeData, isSquare: boolean): ResizeData => {
   if (!isSquare) return data;
 
-  const min = Math.min(data.width, data.height);
-  const diff = Math.abs(data.width - data.height);
-  const y = data.height > data.width ? data.y + diff : data.y;
-
-  return { ...data, width: min, height: min, y };
+  const { y, min } = squared(data);
+  return { x: data.x, y, width: min, height: min };
 };
 
 const lbSquared = (data: ResizeData, isSquare: boolean): ResizeData => {
   if (!isSquare) return data;
 
-  const min = Math.min(data.width, data.height);
-  const diff = Math.abs(data.width - data.height);
-  const x = data.width > data.height ? data.x + diff : data.x;
-
-  return { ...data, width: min, height: min, x };
+  const { x, min } = squared(data);
+  return { x, y: data.y, width: min, height: min };
 };
 
 const rbSquared = (data: ResizeData, isSquare: boolean): ResizeData => {
   if (!isSquare) return data;
 
-  const min = Math.min(data.width, data.height);
-  return { ...data, width: min, height: min };
+  const { min } = squared(data);
+  return { x: data.x, y: data.y, width: min, height: min };
 };
 
 export const createResizeMap = ({ item, clientX, clientY, isSquare }: CreateResizeMapArgs): ResizeMap => {
