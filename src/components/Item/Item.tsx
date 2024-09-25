@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 import styles from './Item.module.css';
 import { useEdges } from './hooks/use-edges';
-import { useResize } from './hooks/use-resize';
+import { useResize } from './hooks/use-resize/use-resize';
 import { useMove } from './hooks/use-move';
 
 import type { Position, Rectangle, ResizeData } from '~/types/item';

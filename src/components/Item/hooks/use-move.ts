@@ -1,12 +1,13 @@
 import { useEffect, useRef } from 'react';
 
+import { constrainToBoard } from './use-move.utils';
+
 import type { Cursor, ItemRef, Position, Rectangle } from '~/types/item';
 import { setStyle } from '~/utils/set-style';
 import { setStyleProp } from '~/utils/set-style-prop';
 import { HOLD_TIME_MS, zIndex } from '~/consts';
 import { useSettings } from '~/hooks/use-settings';
 import { getNewPosition } from '~/utils/get-new-position';
-import { constrainToBoard } from '~/utils/constrain-to-board';
 
 type UseMoveProps = {
   ref: ItemRef;
