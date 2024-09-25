@@ -6,6 +6,7 @@ import { setStyleProp } from '~/utils/set-style-prop';
 import { HOLD_TIME_MS, zIndex } from '~/consts';
 import { useSettings } from '~/hooks/use-settings';
 import { getNewPosition } from '~/utils/get-new-position';
+import { constrainToBoard } from '~/utils/constrain-to-board';
 
 type UseMoveProps = {
   ref: ItemRef;
@@ -68,22 +69,35 @@ export const useMove = ({ ref, item, cursor, onStart, onEnd, onMove }: UseMovePr
 
   const onDrag = ({ clientX, clientY }: MouseEvent) => {
     if (isDragging.current) {
-      const { x, y } = getNewPosition(
+      const initialPosition = getNewPosition(
         clientX - innerPosition.current.x,
         clientY - innerPosition.current.y,
         settings.isPreviewSnapped,
       );
+
+      const { x, y } = constrainToBoard(initialPosition, item);
+
       setStyle(ref, 'left', x + 'px');
       setStyle(ref, 'top', y + 'px');
     }
   };
   const onDragEnd = ({ clientX, clientY }: MouseEvent) => {
     if (isDragging.current) {
-      onMove(item.id, {
-        x: clientX - innerPosition.current.x,
-        y: clientY - innerPosition.current.y,
-      });
+      const initialPosition = getNewPosition(
+        clientX - innerPosition.current.x,
+        clientY - innerPosition.current.y,
+        settings.isPreviewSnapped,
+      );
+      const { x, y } = constrainToBoard(initialPosition, item);
+
+      onMove(item.id, { x, y });
       onEnd();
+
+      if (ref.current) {
+        setStyleProp(ref, '--shadow', 'none');
+        setStyle(ref, 'zIndex', '');
+        setStyle(ref, 'cursor', '');
+      }
     }
     clear();
   };
