@@ -27,6 +27,10 @@ export const Item = ({ layer, onClick, onMove, onResize, ...item }: ItemProps) =
     freezeCursor.current = true;
   };
 
+  const handleEnd = () => {
+    freezeCursor.current = false;
+  };
+
   const handleMove = (id: Rectangle['id'], position: Position) => {
     freezeCursor.current = false;
     onMove?.(id, position);
@@ -38,8 +42,8 @@ export const Item = ({ layer, onClick, onMove, onResize, ...item }: ItemProps) =
 
   const { cursor } = useEdges(ref, item, freezeCursor);
   // @todo: consider merging these 2 hooks
-  useResize({ ref, item, cursor, onStart: handleStart, onResize: handleResize });
-  useMove({ ref, item, cursor, onStart: handleStart, onMove: handleMove });
+  useResize({ ref, item, cursor, onStart: handleStart, onEnd: handleEnd, onResize: handleResize });
+  useMove({ ref, item, cursor, onStart: handleStart, onEnd: handleEnd, onMove: handleMove });
 
   useEffect(() => {
     setStyles(ref, {

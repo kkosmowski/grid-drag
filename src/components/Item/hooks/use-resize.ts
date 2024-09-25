@@ -14,10 +14,11 @@ type UseResizeProps = {
   item: Rectangle;
   cursor: Cursor | null;
   onStart: VoidFunction;
+  onEnd: VoidFunction;
   onResize: (id: Rectangle['id'], data: ResizeData) => void;
 };
 
-export const useResize = ({ ref, item, cursor, onStart, onResize }: UseResizeProps) => {
+export const useResize = ({ ref, item, cursor, onStart, onEnd, onResize }: UseResizeProps) => {
   const [isShiftPressed, setIsShiftPressed] = useState(false);
   const settings = useSettings();
   const canBeResized = cursor !== null;
@@ -33,6 +34,16 @@ export const useResize = ({ ref, item, cursor, onStart, onResize }: UseResizePro
     if (clickTimeout.current !== null) {
       clearTimeout(clickTimeout.current!);
       clickTimeout.current = null;
+      onEnd();
+    }
+
+    if (ref.current) {
+      setStyleProp(ref, '--resize', 'none');
+      setStyle(ref, 'zIndex', '');
+      setStyleProp(ref, '--resize-x', '');
+      setStyleProp(ref, '--resize-y', '');
+      setStyleProp(ref, '--resize-width', '');
+      setStyleProp(ref, '--resize-height', '');
     }
   };
 
@@ -99,15 +110,9 @@ export const useResize = ({ ref, item, cursor, onStart, onResize }: UseResizePro
       };
 
       onResize(item.id, absoluteResizeData);
-      clear();
-
-      if (ref.current) {
-        setStyleProp(ref, '--resize', 'none');
-        setStyle(ref, 'zIndex', '');
-      }
-    } else {
-      clear();
     }
+
+    clear();
   };
 
   // @todo: move to Grid?
