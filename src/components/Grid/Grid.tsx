@@ -8,16 +8,17 @@ import { useRemove } from '~/contexts/RemoveItemsContext';
 
 import { normalizePosition, normalizeSize } from '~/utils/normalize';
 import styles from './Grid.module.css';
-import { CreateItemsOverlay } from '../CreateItemsOverlay';
+import { CreateItemsOverlay } from '~/components/CreateItemsOverlay';
 import { useItemContextMenu } from './hooks/use-item-context-menu';
 import { ContextMenu } from '~/components/ContextMenu';
 import { getItem } from '~/utils/get-item';
 import { useStorage } from '~/hooks/use-storage';
+import { useToggle } from '~/hooks/use-toggle';
 
 export const Grid = () => {
   const storage = useStorage();
   const [items, setItems] = useState(storage.getAll());
-  const [isAddMode, setIsAddMode] = useState(false);
+  const [isAddMode, toggleAddMode] = useToggle(false);
   const previousItems = useRef(items);
   const remove = useRemove();
 
@@ -105,16 +106,17 @@ export const Grid = () => {
     setItems(storage.add(normalizedItem));
   };
 
+  const removeDisabled = !items.length || isAddMode;
+
   return (
     <section className={styles.grid} style={{ backgroundSize: `${GRID_SIZE}px ${GRID_SIZE}px` }}>
       <FloatingUI
         isAddMode={isAddMode}
-        removeDisabled={!items.length}
+        removeDisabled={removeDisabled}
         onRemoveItems={handleRemoveItems}
         onRemoveAll={handleRemoveAll}
         onUndoRemoveAll={handleUndoRemoveAll}
-        onEnableAddMode={() => setIsAddMode(true)}
-        onDisableAddMode={() => setIsAddMode(false)}
+        onToggleAddMode={toggleAddMode}
       />
 
       {items.map((item, index) => (
