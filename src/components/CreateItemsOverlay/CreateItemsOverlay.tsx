@@ -1,4 +1,4 @@
-import { MouseEvent, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 
 import { Rectangle, TemporaryRectangle } from '~/types/item';
 
@@ -10,12 +10,15 @@ import { mapOutlineToRectangle } from '~/utils/map-outline-to-rectangle';
 import { useSettings } from '~/hooks/use-settings';
 import { getNewPosition } from '~/utils/get-new-position';
 
+import { toSquare } from './CreateItemsOverlay.utils';
+
 type CreateItemsOverlayProps = {
   onCreate: (itemWithoutId: Omit<Rectangle, 'id'>) => void;
 };
 
 export const CreateItemsOverlay = ({ onCreate }: CreateItemsOverlayProps) => {
   const [temp, setTemp] = useState<TemporaryRectangle | null>(null);
+  const [isShiftPressed, setIsShiftPressed] = useState(false);
   const settings = useSettings();
 
   const startCreatingItem = (e: MouseEvent) => {
@@ -27,7 +30,7 @@ export const CreateItemsOverlay = ({ onCreate }: CreateItemsOverlayProps) => {
     if (temp) {
       setTemp((item) => {
         const { x: x1, y: y1 } = getNewPosition(e.clientX, e.clientY, settings.isPreviewSnapped);
-        return { ...item!, x1, y1 };
+        return toSquare({ ...item!, x1, y1 }, isShiftPressed);
       });
     }
   };
@@ -56,6 +59,28 @@ export const CreateItemsOverlay = ({ onCreate }: CreateItemsOverlayProps) => {
       setTemp(null);
     }
   };
+
+  const onKeydown = (e: KeyboardEvent) => {
+    if (e.key === 'Shift') {
+      setIsShiftPressed(true);
+    }
+  };
+
+  const onKeyup = (e: KeyboardEvent) => {
+    if (e.key === 'Shift') {
+      setIsShiftPressed(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', onKeydown);
+    window.addEventListener('keyup', onKeyup);
+
+    return () => {
+      window.removeEventListener('keydown', onKeydown);
+      window.removeEventListener('keyup', onKeyup);
+    };
+  }, []);
 
   return (
     <div
