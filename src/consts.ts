@@ -1,4 +1,4 @@
-import { Rectangle } from '~/types/item';
+import type { Rectangle } from '~/types/item';
 
 export const GRID_SIZE = 10;
 

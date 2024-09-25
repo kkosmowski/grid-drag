@@ -1,10 +1,14 @@
-import { ComponentProps, ReactNode, useEffect, useRef } from 'react';
-import { MENU_ITEM_HEIGHT, MENU_WIDTH, zIndex } from '~/consts';
+import type { ComponentProps, ReactNode } from 'react';
+import { useEffect, useRef } from 'react';
+
 import styles from './Menu.module.css';
+
+import { MENU_ITEM_HEIGHT, MENU_WIDTH, zIndex } from '~/consts';
 import { Backdrop } from '~/components/Backdrop';
-import { MenuItem } from '~/types/ui';
-import { Position } from '~/types/item';
-import { IconButton, IconButtonProps } from '~/components/IconButton';
+import type { MenuItem } from '~/types/ui';
+import type { Position } from '~/types/item';
+import type { IconButtonProps } from '~/components/IconButton';
+import { IconButton } from '~/components/IconButton';
 import { Button } from '~/components/Button';
 import { setStyle } from '~/utils/set-style';
 

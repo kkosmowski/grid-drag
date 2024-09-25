@@ -1,6 +1,8 @@
-import { createContext, ReactNode, useCallback, useContext, useState } from 'react';
-import { RemoveProps } from '~/types/ui';
-import { Rectangle } from '~/types/item';
+import type { ReactNode } from 'react';
+import { createContext, useCallback, useContext, useState } from 'react';
+
+import type { RemoveProps } from '~/types/ui';
+import type { Rectangle } from '~/types/item';
 
 export const RemoveItemsContext = createContext<RemoveProps>({
   items: [],

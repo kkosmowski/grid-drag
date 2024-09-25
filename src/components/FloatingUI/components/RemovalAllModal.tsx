@@ -4,10 +4,9 @@ type RemoveAllModalProps = {
   open: boolean;
   onConfirm: VoidFunction;
   onCancel: VoidFunction;
-}
+};
 
 export const RemoveAllModal = ({ open, onConfirm, onCancel }: RemoveAllModalProps) => {
-
   return (
     <Modal open={open} onClose={onCancel}>
       <Modal.Title>Remove all?</Modal.Title>
@@ -16,8 +15,10 @@ export const RemoveAllModal = ({ open, onConfirm, onCancel }: RemoveAllModalProp
 
       <Modal.Footer>
         <Modal.Button onClick={() => onCancel()}>No</Modal.Button>
-        <Modal.Button primary onClick={() => onConfirm()}>Yes</Modal.Button>
+        <Modal.Button primary onClick={() => onConfirm()}>
+          Yes
+        </Modal.Button>
       </Modal.Footer>
     </Modal>
-  )
-}
+  );
+};

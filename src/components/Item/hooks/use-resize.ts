@@ -1,8 +1,10 @@
-import type { Cursor, ItemRef, Rectangle, ResizeData } from '~/types/item';
 import { useEffect, useRef, useState } from 'react';
+
+import { createResizeMap } from './use-resize.utils';
+
+import type { Cursor, ItemRef, Rectangle, ResizeData } from '~/types/item';
 import { setStyleProp } from '~/utils/set-style-prop';
 import { setStyle } from '~/utils/set-style';
-import { createResizeMap } from './use-resize.utils';
 import { HOLD_TIME_MS, zIndex } from '~/consts';
 import { useSettings } from '~/hooks/use-settings';
 import { getNewPosition } from '~/utils/get-new-position';
@@ -118,8 +120,10 @@ export const useResize = ({ ref, item, cursor, onStart, onResize }: UseResizePro
       window.addEventListener('keyup', onKeyup);
     }
 
+    const nodeRef = ref.current;
+
     return () => {
-      if (ref.current) {
+      if (nodeRef) {
         window.removeEventListener('mousedown', onResizeStart);
         window.removeEventListener('mousemove', onResizeDrag);
         window.removeEventListener('mouseup', onResizeEnd);

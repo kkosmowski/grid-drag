@@ -1,15 +1,15 @@
 import { useCallback, useRef, useState } from 'react';
 
+import styles from './Grid.module.css';
+import { useItemContextMenu } from './hooks/use-item-context-menu';
+
 import { Item } from '~/components/Item';
-import { Position, Rectangle, ResizeData, Size } from '~/types/item';
+import type { Position, Rectangle, ResizeData, Size } from '~/types/item';
 import { GRID_SIZE } from '~/consts';
 import { FloatingUI } from '~/components/FloatingUI';
 import { useRemove } from '~/contexts/RemoveItemsContext';
-
 import { normalizePosition, normalizeSize } from '~/utils/normalize';
-import styles from './Grid.module.css';
 import { CreateItemsOverlay } from '~/components/CreateItemsOverlay';
-import { useItemContextMenu } from './hooks/use-item-context-menu';
 import { ContextMenu } from '~/components/ContextMenu';
 import { getItem } from '~/utils/get-item';
 import { useStorage } from '~/hooks/use-storage';
@@ -27,7 +27,7 @@ export const Grid = () => {
       previousItems.current = [...items];
       setItems(storage.patch(itemId, { ...change }));
     },
-    [items, storage.patch],
+    [items, storage],
   );
 
   const handleColorChange = (itemId: Rectangle['id'], color: string) => {

@@ -1,6 +1,9 @@
-import { createContext, ReactNode, useCallback, useRef, useState } from 'react';
-import { Toast } from '~/components/Toast';
+import type { ReactNode } from 'react';
+import { createContext, useCallback, useRef, useState } from 'react';
+
 import styles from './Toaster.module.css';
+
+import { Toast } from '~/components/Toast';
 
 type ToasterContextState = {
   toast: (content: ReactNode, options?: ToastOptions) => ToastData['id'];

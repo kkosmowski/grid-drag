@@ -1,8 +1,9 @@
-import { CSSProperties, useRef } from 'react';
-
-import { TemporaryRectangle } from '~/types/item';
+import type { CSSProperties } from 'react';
+import { useRef } from 'react';
 
 import styles from './ItemOutline.module.css';
+
+import type { TemporaryRectangle } from '~/types/item';
 import { zIndex } from '~/consts';
 import { mapOutlineToRectangle } from '~/utils/map-outline-to-rectangle';
 

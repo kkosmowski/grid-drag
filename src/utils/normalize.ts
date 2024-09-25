@@ -1,4 +1,4 @@
-import { Position, Size } from '~/types/item';
+import type { Position, Size } from '~/types/item';
 import { GRID_SIZE, MIN_SIZE } from '~/consts';
 
 const normalize = (value: number): number => Math.round(value / GRID_SIZE) * GRID_SIZE;

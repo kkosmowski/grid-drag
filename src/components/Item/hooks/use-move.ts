@@ -1,8 +1,9 @@
-import { Cursor, ItemRef, Position, Rectangle } from '~/types/item';
 import { useEffect, useRef } from 'react';
+
+import type { Cursor, ItemRef, Position, Rectangle } from '~/types/item';
 import { setStyle } from '~/utils/set-style';
 import { setStyleProp } from '~/utils/set-style-prop';
-import { HOLD_TIME_MS, zIndex } from '~/consts';
+import { HOLD_TIME_MS } from '~/consts';
 import { useSettings } from '~/hooks/use-settings';
 import { getNewPosition } from '~/utils/get-new-position';
 
@@ -92,12 +93,14 @@ export const useMove = ({ ref, item, cursor, onStart, onMove }: UseMoveProps) =>
       ref.current!.addEventListener('mouseout', onDragEnd);
     }
 
+    const nodeRef = ref.current;
+
     return () => {
-      if (ref.current) {
-        ref.current!.removeEventListener('mousedown', onDragStart);
-        ref.current!.removeEventListener('mousemove', onDrag);
-        ref.current!.removeEventListener('mouseup', onDragEnd);
-        ref.current!.removeEventListener('mouseout', onDragEnd);
+      if (nodeRef) {
+        nodeRef.removeEventListener('mousedown', onDragStart);
+        nodeRef.removeEventListener('mousemove', onDrag);
+        nodeRef.removeEventListener('mouseup', onDragEnd);
+        nodeRef.removeEventListener('mouseout', onDragEnd);
       }
     };
   }, [item]);

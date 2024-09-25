@@ -1,4 +1,5 @@
-import { MutableRefObject } from 'react';
+import type { MutableRefObject } from 'react';
+
 import { setStyle } from '~/utils/set-style';
 
 export const setStyles = (ref: MutableRefObject<HTMLDivElement | null>, styles: Record<string, string | number>) => {

@@ -1,8 +1,9 @@
+import { useRef, useState } from 'react';
+
 import { Button } from '~/components/Button';
 import { IconButton } from '~/components/IconButton';
-import { useRef, useState } from 'react';
 import { RemoveAllModal } from '~/components/FloatingUI/components/RemovalAllModal';
-import { RemoveProps } from '~/types/ui';
+import type { RemoveProps } from '~/types/ui';
 
 type RemoveAllButtonProps = {
   remove: RemoveProps;

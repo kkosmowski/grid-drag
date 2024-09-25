@@ -1,4 +1,4 @@
-import { RemoveProps } from '~/types/ui';
+import type { RemoveProps } from '~/types/ui';
 import { Row } from '~/components/Row';
 import { IconButton } from '~/components/IconButton';
 

@@ -1,6 +1,7 @@
-import { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 import styles from './Modal.module.css';
+
 import { Backdrop } from '~/components/Backdrop';
 import { zIndex } from '~/consts';
 import { stopPropagation } from '~/utils/stop-propagation';

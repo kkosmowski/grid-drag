@@ -1,7 +1,8 @@
-import { createContext, ReactNode, useCallback } from 'react';
+import type { ReactNode } from 'react';
+import { createContext, useCallback } from 'react';
 
 import { Storage } from '~/utils/storage';
-import { Rectangle } from '~/types/item';
+import type { Rectangle } from '~/types/item';
 
 type StorageContextType = {
   get: (id: Rectangle['id']) => Rectangle | null;

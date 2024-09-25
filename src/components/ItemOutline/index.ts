@@ -1,1 +1,1 @@
-export { ItemOutline } from './ItemOutline.tsx';
+export { ItemOutline } from './ItemOutline';

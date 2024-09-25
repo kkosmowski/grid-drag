@@ -1,5 +1,5 @@
 import { EDGE_SIZE } from '~/consts';
-import { Rectangle } from '~/types/item';
+import type { Rectangle } from '~/types/item';
 
 export const isLeftEdge = (clientX: number, item: Rectangle) => clientX < item.x + EDGE_SIZE;
 export const isRightEdge = (clientX: number, item: Rectangle) => clientX > item.x + item.width - EDGE_SIZE;

@@ -1,5 +1,7 @@
-import { type Position, Rectangle } from '~/types/item';
-import { MouseEvent, ReactNode } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
+
+import type { Rectangle } from '~/types/item';
+import { type Position } from '~/types/item';
 
 export type RemoveProps = {
   items: Rectangle['id'][];

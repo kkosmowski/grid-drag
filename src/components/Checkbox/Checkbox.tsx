@@ -1,4 +1,5 @@
 import styles from './Checkbox.module.css';
+
 import { buildClassName } from '~/utils/build-class-name';
 
 type CheckboxProps = {
