@@ -1,5 +1,5 @@
 import type { Cursor, ItemRef, Rectangle, ResizeData } from '~/types/item';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { setStyleProp } from '~/utils/set-style-prop';
 import { setStyle } from '~/utils/set-style';
 import { createResizeMap } from './use-resize.utils';
@@ -16,12 +16,14 @@ type UseResizeProps = {
 };
 
 export const useResize = ({ ref, item, cursor, onStart, onResize }: UseResizeProps) => {
+  const [isShiftPressed, setIsShiftPressed] = useState(false);
   const settings = useSettings();
   const canBeResized = cursor !== null;
   const isResizing = useRef(false);
   const clickTimeout = useRef<number | null>(null);
 
-  const resizeMap = (clientX: number, clientY: number) => createResizeMap({ item, clientX, clientY });
+  const resizeMap = (clientX: number, clientY: number, isSquare: boolean) =>
+    createResizeMap({ item, clientX, clientY, isSquare });
 
   const clear = () => {
     isResizing.current = false;
@@ -29,6 +31,18 @@ export const useResize = ({ ref, item, cursor, onStart, onResize }: UseResizePro
     if (clickTimeout.current !== null) {
       clearTimeout(clickTimeout.current!);
       clickTimeout.current = null;
+    }
+  };
+
+  const onKeydown = (e: KeyboardEvent) => {
+    if (e.key === 'Shift') {
+      setIsShiftPressed(true);
+    }
+  };
+
+  const onKeyup = (e: KeyboardEvent) => {
+    if (e.key === 'Shift') {
+      setIsShiftPressed(false);
     }
   };
 
@@ -67,13 +81,13 @@ export const useResize = ({ ref, item, cursor, onStart, onResize }: UseResizePro
   const onResizeDrag = ({ clientX, clientY }: MouseEvent) => {
     if (isResizing.current && cursor) {
       const { x, y } = getNewPosition(clientX, clientY, settings.isPreviewSnapped);
-      setResize(resizeMap(x, y)[cursor]);
+      setResize(resizeMap(x, y, isShiftPressed)[cursor]);
     }
   };
 
   const onResizeEnd = ({ clientX, clientY }: MouseEvent) => {
     if (isResizing.current && cursor) {
-      const relativeResizeData = resizeMap(clientX, clientY)[cursor];
+      const relativeResizeData = resizeMap(clientX, clientY, isShiftPressed)[cursor];
       // resize map contains position of pseudo element (relative to item), but absolute position must be passed to grid
       const absoluteResizeData: ResizeData = {
         x: relativeResizeData.x + item.x,
@@ -100,6 +114,8 @@ export const useResize = ({ ref, item, cursor, onStart, onResize }: UseResizePro
       window.addEventListener('mousedown', onResizeStart);
       window.addEventListener('mousemove', onResizeDrag);
       window.addEventListener('mouseup', onResizeEnd);
+      window.addEventListener('keydown', onKeydown);
+      window.addEventListener('keyup', onKeyup);
     }
 
     return () => {
@@ -107,6 +123,8 @@ export const useResize = ({ ref, item, cursor, onStart, onResize }: UseResizePro
         window.removeEventListener('mousedown', onResizeStart);
         window.removeEventListener('mousemove', onResizeDrag);
         window.removeEventListener('mouseup', onResizeEnd);
+        window.removeEventListener('keydown', onKeydown);
+        window.removeEventListener('keyup', onKeyup);
       }
     };
   }, [item]);

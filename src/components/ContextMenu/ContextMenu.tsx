@@ -20,5 +20,5 @@ export const ContextMenu = ({ options, data, onClose }: ContextMenuProps) => {
     transform: getTransform(data),
   };
 
-  return <Menu open={!!data} options={options} position={data} style={style} onClose={onClose} />;
+  return <Menu open={!!data} openAt="position" options={options} position={data} style={style} onClose={onClose} />;
 };
