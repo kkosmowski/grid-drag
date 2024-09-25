@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import type { Cursor, ItemRef, Position, Rectangle } from '~/types/item';
 import { setStyle } from '~/utils/set-style';
 import { setStyleProp } from '~/utils/set-style-prop';
-import { HOLD_TIME_MS } from '~/consts';
+import { HOLD_TIME_MS, zIndex } from '~/consts';
 import { useSettings } from '~/hooks/use-settings';
 import { getNewPosition } from '~/utils/get-new-position';
 
@@ -12,12 +12,13 @@ type UseMoveProps = {
   item: Rectangle;
   cursor: Cursor | null;
   onStart: VoidFunction;
+  onEnd: VoidFunction;
   onMove: (id: Rectangle['id'], pos: Position) => void;
 };
 
 const defaultInnerPosition: Position = { x: 0, y: 0 };
 
-export const useMove = ({ ref, item, cursor, onStart, onMove }: UseMoveProps) => {
+export const useMove = ({ ref, item, cursor, onStart, onEnd, onMove }: UseMoveProps) => {
   const settings = useSettings();
   const canBeMoved = cursor === null;
   const isDragging = useRef(false);
@@ -31,6 +32,13 @@ export const useMove = ({ ref, item, cursor, onStart, onMove }: UseMoveProps) =>
     if (clickTimeout.current !== null) {
       clearTimeout(clickTimeout.current!);
       clickTimeout.current = null;
+      onEnd();
+    }
+
+    if (ref.current) {
+      setStyleProp(ref, '--shadow', 'none');
+      setStyle(ref, 'zIndex', '');
+      setStyle(ref, 'cursor', '');
     }
   };
 
@@ -52,7 +60,7 @@ export const useMove = ({ ref, item, cursor, onStart, onMove }: UseMoveProps) =>
 
       if (ref.current) {
         setStyleProp(ref, '--shadow', '0 0 8px 1px #0004');
-        setStyle(ref, 'zIndex', 10000);
+        setStyle(ref, 'zIndex', zIndex.temporaryItem);
         setStyle(ref, 'cursor', 'move');
       }
     }, HOLD_TIME_MS);
@@ -75,12 +83,7 @@ export const useMove = ({ ref, item, cursor, onStart, onMove }: UseMoveProps) =>
         x: clientX - innerPosition.current.x,
         y: clientY - innerPosition.current.y,
       });
-
-      if (ref.current) {
-        setStyleProp(ref, '--shadow', 'none');
-        setStyle(ref, 'zIndex', '');
-        setStyle(ref, 'cursor', '');
-      }
+      onEnd();
     }
     clear();
   };
