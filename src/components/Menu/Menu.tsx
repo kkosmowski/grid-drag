@@ -11,7 +11,7 @@ import { setStyle } from '~/utils/set-style';
 type MenuProps = ComponentProps<'menu'> & {
   open?: boolean;
   options: MenuItem[];
-  openAt?: 'button' | 'position';
+  openAt: 'button' | 'position';
   button?: {
     iconName?: IconButtonProps['name'];
     content?: ReactNode;
@@ -21,17 +21,7 @@ type MenuProps = ComponentProps<'menu'> & {
   onClose?: VoidFunction;
 };
 
-export const Menu = ({
-  open,
-  options,
-  openAt = 'button',
-  button,
-  position,
-  onOpen,
-  onClose,
-  style,
-  ...menuProps
-}: MenuProps) => {
+export const Menu = ({ open, options, openAt, button, position, onOpen, onClose, style, ...menuProps }: MenuProps) => {
   if (openAt === 'button' && !button) {
     console.error("Menu: openAt 'button' but no `button` provided.");
   } else if (openAt === 'position' && !position) {
