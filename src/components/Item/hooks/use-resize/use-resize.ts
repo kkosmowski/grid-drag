@@ -94,6 +94,7 @@ export const useResize = ({ ref, item, cursor, onStart, onEnd, onResize }: UseRe
   const onResizeDrag = ({ clientX, clientY }: MouseEvent) => {
     if (isResizing.current && cursor) {
       const { x, y } = getNewPosition(clientX, clientY, settings.isPreviewSnapped);
+      console.log(resizeMap(x, y, isShiftPressed)[cursor]);
       setResize(resizeMap(x, y, isShiftPressed)[cursor]);
     }
   };
