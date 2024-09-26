@@ -11,6 +11,7 @@ export type Rectangle = Size &
   Position & {
     id: number;
     color: string;
+    parent?: Rectangle['id'];
   };
 
 export type Size = {

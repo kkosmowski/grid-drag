@@ -14,20 +14,25 @@ import { ContextMenu } from '~/components/ContextMenu';
 import { getItem } from '~/utils/get-item';
 import { useStorage } from '~/hooks/use-storage';
 import { useToggle } from '~/hooks/use-toggle';
+import { findParents } from '~/components/Grid/Grid.utils';
 
 export const Grid = () => {
   const storage = useStorage();
-  const [items, setItems] = useState(storage.getAll());
+  const [items, setItems] = useState(findParents(storage.getAll()));
   const [isAddMode, toggleAddMode] = useToggle(false);
   const previousItems = useRef(items);
   const remove = useRemove();
 
+  const updateItems = useCallback((items: Rectangle[]) => {
+    setItems(findParents(items));
+  }, []);
+
   const modifyItem = useCallback(
     (itemId: Rectangle['id'], change: Partial<Rectangle>) => {
       previousItems.current = [...items];
-      setItems(storage.patch(itemId, { ...change }));
+      updateItems(storage.patch(itemId, { ...change }));
     },
-    [items, storage],
+    [items, storage, updateItems],
   );
 
   const handleColorChange = (itemId: Rectangle['id'], color: string) => {
@@ -55,18 +60,18 @@ export const Grid = () => {
   });
 
   const handleRemoveItems = () => {
-    setItems(storage.remove(remove.items));
+    updateItems(storage.remove(remove.items));
     remove.onAfterRemove();
   };
 
   const handleRemoveAll = () => {
     previousItems.current = [...items];
-    setItems(storage.removeAll());
+    updateItems(storage.removeAll());
   };
 
   const handleUndoRemoveAll = () => {
     previousItems.current = [];
-    setItems(storage.setAll(previousItems.current));
+    updateItems(storage.setAll(previousItems.current));
   };
 
   const handleMove = useCallback(
@@ -103,7 +108,7 @@ export const Grid = () => {
     };
 
     previousItems.current = [...items];
-    setItems(storage.add(normalizedItem));
+    updateItems(storage.add(normalizedItem));
   };
 
   const removeDisabled = !items.length || isAddMode;
