@@ -44,7 +44,10 @@ export const useMove = ({ ref, item, cursor, onStart, onEnd, onMove }: UseMovePr
     }
   };
 
-  const onDragStart = ({ button, clientX, clientY }: MouseEvent) => {
+  const onDragStart = (event: MouseEvent) => {
+    event.stopPropagation();
+    const { button, clientX, clientY } = event;
+
     if (button !== 0) return; // handle LMB only
     if (!canBeMoved) return;
 

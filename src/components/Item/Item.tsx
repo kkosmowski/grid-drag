@@ -10,6 +10,7 @@ import { useRemove } from '~/contexts/RemoveItemsContext';
 import { setStyle } from '~/utils/set-style';
 import { setStyles } from '~/utils/set-styles';
 import { setStyleProp } from '~/utils/set-style-prop';
+import { stopPropagation } from '~/utils/stop-propagation';
 
 type ItemProps = Rectangle & {
   layer: number;
@@ -69,7 +70,14 @@ export const Item = ({ layer, onClick, onMove, onResize, ...item }: ItemProps) =
   }, [remove.isOn]);
 
   return (
-    <div ref={ref} className={styles.item} onClick={() => onClick?.(item.id)}>
+    <div
+      ref={ref}
+      className={styles.item}
+      onClick={(e) => {
+        stopPropagation(e);
+        onClick?.(item.id);
+      }}
+    >
       {item.children.map((child, index) => (
         <Item key={child.id} layer={item.id + index} {...child} onMove={onMove} onResize={onResize} onClick={onClick} />
       ))}

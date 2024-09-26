@@ -70,8 +70,9 @@ export const useResize = ({ ref, item, cursor, onStart, onEnd, onResize }: UseRe
     setStyleProp(ref, '--resize-height', height + 'px');
   };
 
-  const onResizeStart = ({ target }: MouseEvent) => {
-    if (!canBeResized || target !== ref.current) return;
+  const onResizeStart = (event: MouseEvent) => {
+    event.stopPropagation();
+    if (!canBeResized || event.target !== ref.current) return;
 
     if (isResizing.current) {
       clear();

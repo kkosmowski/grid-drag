@@ -28,7 +28,14 @@ export const Grid = () => {
       previousItems.current = [...items];
 
       const newItems = relateItems(
-        items.map((rectangle) => (rectangle.id === itemId ? { ...rectangle, ...change } : rectangle)),
+        items.map((rectangle) =>
+          rectangle.id === itemId
+            ? { ...rectangle, ...change }
+            : {
+                ...rectangle,
+                children: rectangle.children.map((child) => (child.id === itemId ? { ...child, ...change } : child)),
+              },
+        ),
       );
 
       setItems(storage.setAll(newItems));

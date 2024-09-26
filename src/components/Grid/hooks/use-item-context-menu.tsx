@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import type { Rectangle } from '~/types/item';
+import type { FlatRectangle, Rectangle } from '~/types/item';
 import { MENU_ITEM_HEIGHT, MENU_MARGIN, MENU_WIDTH } from '~/consts';
 import type { MenuData, MenuItem } from '~/types/ui';
 import { getItem } from '~/utils/get-item';
 import { ColorPicker } from '~/components/ColorPicker/ColorPicker';
 import { isDefined } from '~/utils/is-defined';
+import { flattenItems } from '~/utils/flatten-items';
 
 type UseItemContextMenuReturnArgs = {
   items: Rectangle[];
@@ -20,7 +21,7 @@ type UseItemContextMenuReturnValue = {
   closeMenu: VoidFunction;
 };
 
-const wasItemClicked = (item: Rectangle, { clientX, clientY }: Pick<MouseEvent, 'clientX' | 'clientY'>) => {
+const wasItemClicked = (item: FlatRectangle, { clientX, clientY }: Pick<MouseEvent, 'clientX' | 'clientY'>) => {
   const isInsideHorizontally = clientX >= item.x && clientX <= item.x + item.width;
   const isInsideVertically = clientY >= item.y && clientY <= item.y + item.height;
 
@@ -110,7 +111,9 @@ export const useItemContextMenu = (args: UseItemContextMenuReturnArgs): UseItemC
 
       if (button !== 2) return; // handle RMB only
 
-      const clickedItems = items.filter((item) => wasItemClicked(item, { clientX, clientY }));
+      const clickedItems = flattenItems<FlatRectangle>(items, { absolutize: true }).filter((item) =>
+        wasItemClicked(item, { clientX, clientY }),
+      );
 
       if (clickedItems.length > 1) {
         // more than 1 item: highest zIndex is always the last in the event propagation order

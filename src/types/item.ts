@@ -7,12 +7,15 @@ export type TemporaryRectangle = {
   y1: number;
 };
 
-export type Rectangle = Size &
+export type FlatRectangle = Size &
   Position & {
     id: number;
     color: string;
-    children: Rectangle[];
   };
+
+export type Rectangle = FlatRectangle & {
+  children: Rectangle[];
+};
 
 export type Size = {
   width: number;
