@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from 'react';
 
 import styles from './Grid.module.css';
 import { useItemContextMenu } from './hooks/use-item-context-menu';
+import { relateItems } from './Grid.utils';
 
 import { Item } from '~/components/Item';
 import type { Position, Rectangle, ResizeData, Size } from '~/types/item';
@@ -14,25 +15,25 @@ import { ContextMenu } from '~/components/ContextMenu';
 import { getItem } from '~/utils/get-item';
 import { useStorage } from '~/hooks/use-storage';
 import { useToggle } from '~/hooks/use-toggle';
-import { findParents } from '~/components/Grid/Grid.utils';
 
 export const Grid = () => {
   const storage = useStorage();
-  const [items, setItems] = useState(findParents(storage.getAll()));
+  const [items, setItems] = useState(relateItems(storage.getAll()));
   const [isAddMode, toggleAddMode] = useToggle(false);
   const previousItems = useRef(items);
   const remove = useRemove();
 
-  const updateItems = useCallback((items: Rectangle[]) => {
-    setItems(findParents(items));
-  }, []);
-
   const modifyItem = useCallback(
     (itemId: Rectangle['id'], change: Partial<Rectangle>) => {
       previousItems.current = [...items];
-      updateItems(storage.patch(itemId, { ...change }));
+
+      const newItems = relateItems(
+        items.map((rectangle) => (rectangle.id === itemId ? { ...rectangle, ...change } : rectangle)),
+      );
+
+      setItems(storage.setAll(newItems));
     },
-    [items, storage, updateItems],
+    [items, storage],
   );
 
   const handleColorChange = (itemId: Rectangle['id'], color: string) => {
@@ -49,7 +50,7 @@ export const Grid = () => {
 
     setItems((current) => {
       const filtered = current.filter(({ id }) => id !== itemId);
-      return storage.setAll(where === -1 ? [item, ...filtered] : [...filtered, item]);
+      return storage.setAll(relateItems(where === -1 ? [item, ...filtered] : [...filtered, item]));
     });
   };
 
@@ -60,18 +61,18 @@ export const Grid = () => {
   });
 
   const handleRemoveItems = () => {
-    updateItems(storage.remove(remove.items));
+    const newItems = relateItems(items.filter(({ id }) => remove.items.includes(id)));
+    setItems(storage.setAll(newItems));
     remove.onAfterRemove();
   };
 
   const handleRemoveAll = () => {
     previousItems.current = [...items];
-    updateItems(storage.removeAll());
+    setItems(storage.removeAll());
   };
 
   const handleUndoRemoveAll = () => {
-    previousItems.current = [];
-    updateItems(storage.setAll(previousItems.current));
+    setItems(storage.setAll(previousItems.current));
   };
 
   const handleMove = useCallback(
@@ -102,13 +103,14 @@ export const Grid = () => {
   const handleCreateItem = (itemWithoutId: Omit<Rectangle, 'id'>) => {
     const normalizedItem: Rectangle = {
       id: items.length,
+      children: [],
       color: itemWithoutId.color,
       ...normalizePosition(itemWithoutId),
       ...normalizeSize(itemWithoutId),
     };
 
     previousItems.current = [...items];
-    updateItems(storage.add(normalizedItem));
+    setItems(storage.add(normalizedItem));
   };
 
   const removeDisabled = !items.length || isAddMode;

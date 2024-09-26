@@ -1,4 +1,5 @@
 import type { Rectangle } from '~/types/item';
+import { convertToRelativePosition } from '~/utils/convert-to-relative-position';
 
 const getCoordinates = ({ x, y, width, height }: Rectangle): [number, number, number, number] => [
   x,
@@ -15,17 +16,21 @@ const isContaining = (possibleParent: Rectangle, possibleChild: Rectangle): bool
   return pX0 < cX0 && pY0 < cY0 && pX1 > cX1 && pY1 > cY1;
 };
 
-export const findParents = (items: Rectangle[]): Rectangle[] => {
-  // each item can have only 1 parent, children are always higher than parents.
-  // item can be inside multiple items, but its first "container" is the parent
-  const fromTopToBottom = items.reverse();
+export const relateItems = (items: Rectangle[]): Rectangle[] => {
+  let fromTopToBottom = items.reverse();
 
   for (let i = 0; i < fromTopToBottom.length; i++) {
     const item = fromTopToBottom[i];
-    const parent = fromTopToBottom.slice(i + 1).find((rectangle) => isContaining(rectangle, item));
 
-    if (parent) {
-      item.parent = parent.id;
+    const parentIndex = fromTopToBottom.slice(i + 1).findIndex((rectangle) => isContaining(rectangle, item));
+
+    if (parentIndex !== -1) {
+      const relativeItem = convertToRelativePosition(item, {
+        x: fromTopToBottom[parentIndex + 1].x,
+        y: fromTopToBottom[parentIndex + 1].y,
+      });
+      fromTopToBottom[parentIndex + 1].children.push(relativeItem);
+      fromTopToBottom = fromTopToBottom.slice(0, i).concat(fromTopToBottom.slice(i + 1));
     }
   }
 

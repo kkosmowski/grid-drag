@@ -61,12 +61,18 @@ export const Item = ({ layer, onClick, onMove, onResize, ...item }: ItemProps) =
 
   useEffect(() => {
     setStyle(ref, 'opacity', remove.isSelected(item.id) ? '0.5' : '');
-  }, [remove.isSelected]);
+  }, [item.id, remove]);
 
   useEffect(() => {
     setStyle(ref, 'cursor', remove.isOn ? 'pointer' : '');
     freezeCursor.current = remove.isOn;
   }, [remove.isOn]);
 
-  return <div ref={ref} className={styles.item} onClick={() => onClick?.(item.id)} />;
+  return (
+    <div ref={ref} className={styles.item} onClick={() => onClick?.(item.id)}>
+      {item.children.map((child, index) => (
+        <Item key={child.id} layer={item.id + index} {...child} onMove={onMove} onResize={onResize} onClick={onClick} />
+      ))}
+    </div>
+  );
 };

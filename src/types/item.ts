@@ -11,7 +11,7 @@ export type Rectangle = Size &
   Position & {
     id: number;
     color: string;
-    parent?: Rectangle['id'];
+    children: Rectangle[];
   };
 
 export type Size = {
@@ -57,3 +57,5 @@ export enum EdgeCursor {
 export type Cursor = CornerCursor | EdgeCursor;
 
 export type ItemRef = MutableRefObject<HTMLDivElement | null>;
+
+export type MapperFn = (items: Rectangle[]) => Rectangle[];
