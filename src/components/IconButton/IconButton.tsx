@@ -7,7 +7,7 @@ import { Button } from '../Button';
 import type { IconProps } from '~/components/Icon';
 import { Icon } from '~/components/Icon';
 
-export type IconButtonProps = Omit<ButtonProps, 'children'> & {
+export type IconButtonProps = Omit<ButtonProps, 'contained'> & {
   name: IconProps['name'];
   variant?: IconProps['variant'];
 };

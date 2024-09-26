@@ -1,5 +1,6 @@
 import type { Rectangle } from '~/types/item';
 import { convertToRelativePosition } from '~/utils/convert-to-relative-position';
+import { flattenItems } from '~/utils/flatten-items';
 
 const getCoordinates = ({ x, y, width, height }: Rectangle): [number, number, number, number] => [
   x,
@@ -17,7 +18,7 @@ const isContaining = (possibleParent: Rectangle, possibleChild: Rectangle): bool
 };
 
 export const relateItems = (items: Rectangle[]): Rectangle[] => {
-  let fromTopToBottom = items.reverse();
+  let fromTopToBottom = flattenItems<Rectangle>(items, { absolutize: true, withContained: true }).reverse();
 
   for (let i = 0; i < fromTopToBottom.length; i++) {
     const item = fromTopToBottom[i];
@@ -29,7 +30,7 @@ export const relateItems = (items: Rectangle[]): Rectangle[] => {
         x: fromTopToBottom[parentIndex + 1].x,
         y: fromTopToBottom[parentIndex + 1].y,
       });
-      fromTopToBottom[parentIndex + 1].children.push(relativeItem);
+      fromTopToBottom[parentIndex + 1].contained.push(relativeItem);
       fromTopToBottom = fromTopToBottom.slice(0, i).concat(fromTopToBottom.slice(i + 1));
     }
   }

@@ -12,6 +12,7 @@ import { getNewPosition } from '~/utils/get-new-position';
 type UseMoveProps = {
   ref: ItemRef;
   item: Rectangle;
+  parent?: Rectangle;
   cursor: Cursor | null;
   onStart: VoidFunction;
   onEnd: VoidFunction;
@@ -20,7 +21,7 @@ type UseMoveProps = {
 
 const defaultInnerPosition: Position = { x: 0, y: 0 };
 
-export const useMove = ({ ref, item, cursor, onStart, onEnd, onMove }: UseMoveProps) => {
+export const useMove = ({ ref, item, parent, cursor, onStart, onEnd, onMove }: UseMoveProps) => {
   const settings = useSettings();
   const canBeMoved = cursor === null;
   const isDragging = useRef(false);
@@ -79,7 +80,7 @@ export const useMove = ({ ref, item, cursor, onStart, onEnd, onMove }: UseMovePr
         settings.isPreviewSnapped,
       );
 
-      const { x, y } = constrainToBoard(initialPosition, item);
+      const { x, y } = constrainToBoard(initialPosition, item, parent);
 
       setStyle(ref, 'left', x + 'px');
       setStyle(ref, 'top', y + 'px');
@@ -92,7 +93,7 @@ export const useMove = ({ ref, item, cursor, onStart, onEnd, onMove }: UseMovePr
         clientY - innerPosition.current.y,
         settings.isPreviewSnapped,
       );
-      const { x, y } = constrainToBoard(initialPosition, item);
+      const { x, y } = constrainToBoard(initialPosition, item, parent);
 
       onMove(item.id, { x, y });
       onEnd();

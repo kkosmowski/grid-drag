@@ -18,7 +18,7 @@ import { useToggle } from '~/hooks/use-toggle';
 
 export const Grid = () => {
   const storage = useStorage();
-  const [items, setItems] = useState(relateItems(storage.getAll()));
+  const [items, setItems] = useState(storage.getAll());
   const [isAddMode, toggleAddMode] = useToggle(false);
   const previousItems = useRef(items);
   const remove = useRemove();
@@ -33,7 +33,7 @@ export const Grid = () => {
             ? { ...rectangle, ...change }
             : {
                 ...rectangle,
-                children: rectangle.children.map((child) => (child.id === itemId ? { ...child, ...change } : child)),
+                contained: rectangle.contained.map((child) => (child.id === itemId ? { ...child, ...change } : child)),
               },
         ),
       );
@@ -110,7 +110,7 @@ export const Grid = () => {
   const handleCreateItem = (itemWithoutId: Omit<Rectangle, 'id'>) => {
     const normalizedItem: Rectangle = {
       id: items.length,
-      children: [],
+      contained: [],
       color: itemWithoutId.color,
       ...normalizePosition(itemWithoutId),
       ...normalizeSize(itemWithoutId),

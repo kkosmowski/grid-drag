@@ -8,5 +8,5 @@ export const getItem = (items: Rectangle[], itemId: Rectangle['id'] | null): Rec
 
   if (possibleItem) return possibleItem;
 
-  return items.flatMap(({ children }) => children).find((item) => item.id === itemId) ?? undefined;
+  return items.flatMap(({ contained }) => contained).find((item) => item.id === itemId) ?? undefined;
 };

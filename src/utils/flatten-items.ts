@@ -4,25 +4,25 @@ import { convertToAbsolutePosition } from '~/utils/convert-to-absolute-position'
 type FlattenItemsOptions = {
   absolutize?: boolean;
   parent?: FlatRectangle;
-  withChildren?: boolean;
+  withContained?: boolean;
 };
 
 const defaultOptions: FlattenItemsOptions = {
   absolutize: false,
   parent: undefined,
-  withChildren: false,
+  withContained: false,
 };
 
 export const flattenItems = <T = Rectangle | FlatRectangle>(items: Rectangle[], options?: FlattenItemsOptions) => {
-  const { absolutize, parent, withChildren } = options ?? defaultOptions;
+  const { absolutize, parent, withContained } = options ?? defaultOptions;
 
   return items.reduce<T[]>((flat, item) => {
-    const { children, ...restOfItem } = item;
+    const { contained, ...restOfItem } = item;
     const finalItem = !!(absolutize && parent) ? convertToAbsolutePosition(restOfItem, parent) : restOfItem;
     const nextOptions = options ? { ...options, parent: finalItem } : undefined;
 
     // @ts-expect-error ts does not support dynamic types
-    flat.push(withChildren ? { ...finalItem, children: [] } : finalItem, ...flattenItems(children, nextOptions));
+    flat.push(withContained ? { ...finalItem, contained: [] } : finalItem, ...flattenItems(contained, nextOptions));
     return flat;
   }, []);
 };

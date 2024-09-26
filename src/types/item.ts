@@ -14,7 +14,7 @@ export type FlatRectangle = Size &
   };
 
 export type Rectangle = FlatRectangle & {
-  children: Rectangle[];
+  contained: Rectangle[];
 };
 
 export type Size = {

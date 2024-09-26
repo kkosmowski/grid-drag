@@ -45,7 +45,7 @@ export const Item = ({ layer, parent, onClick, onMove, onResize, ...item }: Item
   const { cursor } = useEdges({ ref, item, parent, freezeCursor });
   // @todo: consider merging these 2 hooks
   useResize({ ref, item, cursor, onStart: handleStart, onEnd: handleEnd, onResize: handleResize });
-  useMove({ ref, item, cursor, onStart: handleStart, onEnd: handleEnd, onMove: handleMove });
+  useMove({ ref, item, parent, cursor, onStart: handleStart, onEnd: handleEnd, onMove: handleMove });
 
   useEffect(() => {
     setStyles(ref, {
@@ -79,7 +79,7 @@ export const Item = ({ layer, parent, onClick, onMove, onResize, ...item }: Item
         onClick?.(item.id);
       }}
     >
-      {item.children.map((child, index) => (
+      {item.contained.map((child, index) => (
         <Item
           key={child.id}
           layer={item.id + index}

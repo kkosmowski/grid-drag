@@ -8,7 +8,7 @@ import { stopPropagation } from '~/utils/stop-propagation';
 
 type ModalProps = {
   open: boolean;
-  children: ReactNode;
+  contained: ReactNode;
   onClose?: VoidFunction;
 };
 
