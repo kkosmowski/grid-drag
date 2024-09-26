@@ -2,7 +2,7 @@ import type { MouseEvent } from 'react';
 import { useEffect, useState } from 'react';
 
 import styles from './CrateItemsOverlay.module.css';
-import { toSquare } from './CreateItemsOverlay.utils';
+import { constrainToBoard, toSquare } from './CreateItemsOverlay.utils';
 
 import type { Rectangle, TemporaryRectangle } from '~/types/item';
 import { ItemOutline } from '~/components/ItemOutline';
@@ -29,8 +29,10 @@ export const CreateItemsOverlay = ({ onCreate }: CreateItemsOverlayProps) => {
   const updateItem = (e: MouseEvent) => {
     if (temp) {
       setTemp((item) => {
-        const { x: x1, y: y1 } = getNewPosition(e.clientX, e.clientY, settings.isPreviewSnapped);
-        return toSquare({ ...item!, x1, y1 }, isShiftPressed);
+        const initialPosition = getNewPosition(e.clientX, e.clientY, settings.isPreviewSnapped);
+        const constrainedItem = constrainToBoard(initialPosition.x, initialPosition.y, item!);
+
+        return toSquare(constrainedItem, isShiftPressed);
       });
     }
   };

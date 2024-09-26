@@ -1,4 +1,5 @@
-import type { TemporaryRectangle } from '~/types/item';
+import type { Position, TemporaryRectangle } from '~/types/item';
+import { BOARD_PADDING } from '~/consts';
 
 const getMin = (x0: number, y0: number, x1: number, y1: number): number => {
   const width = Math.abs(x0 - x1);
@@ -47,4 +48,19 @@ export const toSquare = (rectangle: TemporaryRectangle, isShiftPressed: boolean)
 
   // width is 0 or height is 0, make the other 0 as well
   return { x0, y0, x1: x0, y1: y0 };
+};
+
+export const constrainToBoard = (x: number, y: number, item: TemporaryRectangle): TemporaryRectangle => {
+  const start: Position = { x: item.x0, y: item.y0 };
+  const minX = BOARD_PADDING;
+  const maxX = window.innerWidth - start.x - BOARD_PADDING;
+  const minY = BOARD_PADDING;
+  const maxY = window.innerHeight - start.y - BOARD_PADDING;
+
+  return {
+    x0: item.x0,
+    x1: Math.max(minX, Math.min(x, item.x0 + maxX)),
+    y0: item.y0,
+    y1: Math.max(minY, Math.min(y, item.y0 + maxY)),
+  };
 };
