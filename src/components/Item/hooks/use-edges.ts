@@ -10,9 +10,16 @@ import { isBottomEdge, isLeftEdge, isRightEdge, isTopEdge } from '~/utils/edges-
 
 const LISTEN_DEBOUNCE = 10;
 
+type UseEdgesProps = {
+  ref: ItemRef;
+  item: Rectangle;
+  parent?: Rectangle;
+  freezeCursor: MutableRefObject<boolean>;
+};
+
 // This hook is responsible for listening to mouse on edges and handling correct cursor.
 // This cursor is later provided to the component to make decisions such as whether to resize or move.
-export const useEdges = (ref: ItemRef, item: Rectangle, freezeCursor: MutableRefObject<boolean>) => {
+export const useEdges = ({ ref, item, parent, freezeCursor }: UseEdgesProps) => {
   const [cursor, setCursor] = useState<Cursor | null>(null);
 
   const handleEdgeHover = (edges: ItemEdges) => {
@@ -33,14 +40,22 @@ export const useEdges = (ref: ItemRef, item: Rectangle, freezeCursor: MutableRef
     }
   };
 
-  const edgeListener = useDebouncedCallback(({ clientX, clientY }: MouseEvent) => {
-    const isLE = isLeftEdge(clientX, item);
-    const isRE = isRightEdge(clientX, item);
-    const isTE = isTopEdge(clientY, item);
-    const isBE = isBottomEdge(clientY, item);
+  const debouncedEdgeListener = useDebouncedCallback(({ clientX, clientY }: MouseEvent) => {
+    const isLE = isLeftEdge(clientX, item, parent);
+    const isRE = isRightEdge(clientX, item, parent);
+    const isTE = isTopEdge(clientY, item, parent);
+    const isBE = isBottomEdge(clientY, item, parent);
 
     handleEdgeHover({ isLE, isRE, isTE, isBE });
   }, LISTEN_DEBOUNCE);
+
+  const edgeListener = useCallback(
+    (event: MouseEvent) => {
+      event.stopPropagation();
+      debouncedEdgeListener(event);
+    },
+    [debouncedEdgeListener],
+  );
 
   const resetCursor = useCallback(() => {
     if (!freezeCursor.current) {
@@ -65,7 +80,7 @@ export const useEdges = (ref: ItemRef, item: Rectangle, freezeCursor: MutableRef
         itemRef.removeEventListener('mouseleave', resetCursor);
       }
     };
-  }, [ref.current]);
+  }, [edgeListener, ref, resetCursor]);
 
   return { cursor };
 };

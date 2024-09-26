@@ -14,12 +14,13 @@ import { stopPropagation } from '~/utils/stop-propagation';
 
 type ItemProps = Rectangle & {
   layer: number;
+  parent?: Rectangle;
   onClick?: (id: Rectangle['id']) => void;
   onMove?: (id: Rectangle['id'], position: Position) => void;
   onResize?: (id: Rectangle['id'], data: ResizeData) => void;
 };
 
-export const Item = ({ layer, onClick, onMove, onResize, ...item }: ItemProps) => {
+export const Item = ({ layer, parent, onClick, onMove, onResize, ...item }: ItemProps) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const freezeCursor = useRef(false);
   const remove = useRemove();
@@ -41,7 +42,7 @@ export const Item = ({ layer, onClick, onMove, onResize, ...item }: ItemProps) =
     onResize?.(id, data);
   };
 
-  const { cursor } = useEdges(ref, item, freezeCursor);
+  const { cursor } = useEdges({ ref, item, parent, freezeCursor });
   // @todo: consider merging these 2 hooks
   useResize({ ref, item, cursor, onStart: handleStart, onEnd: handleEnd, onResize: handleResize });
   useMove({ ref, item, cursor, onStart: handleStart, onEnd: handleEnd, onMove: handleMove });
@@ -79,7 +80,15 @@ export const Item = ({ layer, onClick, onMove, onResize, ...item }: ItemProps) =
       }}
     >
       {item.children.map((child, index) => (
-        <Item key={child.id} layer={item.id + index} {...child} onMove={onMove} onResize={onResize} onClick={onClick} />
+        <Item
+          key={child.id}
+          layer={item.id + index}
+          parent={item}
+          {...child}
+          onMove={onMove}
+          onResize={onResize}
+          onClick={onClick}
+        />
       ))}
     </div>
   );
