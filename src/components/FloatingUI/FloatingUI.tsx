@@ -45,7 +45,7 @@ export const FloatingUI = (props: FloatingUIProps) => {
 
   return (
     <header className={styles.header} style={{ zIndex: zIndex.ui }} onClick={stopPropagation}>
-      <CreateButton isAddMode={isAddMode} onToggle={toggleAddingItems} />
+      <CreateButton isAddMode={isAddMode} disabled={remove.isOn} onToggle={toggleAddingItems} />
       <RemoveButton remove={remove} disabled={removeDisabled} onRemove={onRemoveItems} />
       <RemoveAllButton remove={remove} disabled={removeDisabled} onRemoveAll={onRemoveAll} onUndo={onUndoRemoveAll} />
 
