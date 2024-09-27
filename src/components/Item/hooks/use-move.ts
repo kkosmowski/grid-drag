@@ -5,7 +5,7 @@ import { constrainToBoard } from './use-move.utils';
 import type { Cursor, ItemRef, Position, Rectangle } from '~/types/item';
 import { setStyle } from '~/utils/set-style';
 import { setStyleProp } from '~/utils/set-style-prop';
-import { HOLD_TIME_MS, zIndex } from '~/consts';
+import { HOLD_TIME_MS, Z_INDEX } from '~/consts';
 import { useSettings } from '~/hooks/use-settings';
 import { getNewPosition } from '~/utils/get-new-position';
 
@@ -64,7 +64,7 @@ export const useMove = ({ ref, item, parent, cursor, onStart, onEnd, onMove }: U
 
       if (ref.current) {
         setStyleProp(ref, '--shadow', '0 0 8px 1px #0004');
-        setStyle(ref, 'zIndex', zIndex.temporaryItem);
+        setStyle(ref, 'zIndex', Z_INDEX.temporaryItem);
         setStyle(ref, 'cursor', 'move');
       }
     }, HOLD_TIME_MS);

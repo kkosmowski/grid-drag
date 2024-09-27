@@ -5,7 +5,7 @@ import { createResizeMap } from './use-resize.utils';
 import type { Cursor, ItemRef, Rectangle, ResizeData } from '~/types/item';
 import { setStyleProp } from '~/utils/set-style-prop';
 import { setStyle } from '~/utils/set-style';
-import { HOLD_TIME_MS, zIndex } from '~/consts';
+import { HOLD_TIME_MS, Z_INDEX } from '~/consts';
 import { useSettings } from '~/hooks/use-settings';
 import { getNewPosition } from '~/utils/get-new-position';
 
@@ -88,7 +88,7 @@ export const useResize = ({ ref, item, parent, cursor, onStart, onEnd, onResize 
         const { width, height } = item;
 
         setStyleProp(ref, '--resize', 'block');
-        setStyle(ref, 'zIndex', zIndex.draggedItem);
+        setStyle(ref, 'zIndex', Z_INDEX.draggedItem);
         setResize({ x: 0, y: 0, width, height });
       }
     }, HOLD_TIME_MS);

@@ -14,6 +14,8 @@ const defaultOptions: FlattenItemsOptions = {
 };
 
 export const flattenItems = <T = Rectangle | FlatRectangle>(items: Rectangle[], options?: FlattenItemsOptions) => {
+  if (!items.length) return [];
+
   const { absolutize, parent, withContained } = options ?? defaultOptions;
 
   return items.reduce<T[]>((flat, item) => {

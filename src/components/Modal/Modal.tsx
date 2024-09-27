@@ -3,12 +3,12 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import styles from './Modal.module.css';
 
 import { Backdrop } from '~/components/Backdrop';
-import { zIndex } from '~/consts';
+import { Z_INDEX } from '~/consts';
 import { stopPropagation } from '~/utils/stop-propagation';
 
 type ModalProps = {
   open: boolean;
-  contained: ReactNode;
+  children: ReactNode;
   onClose?: VoidFunction;
 };
 
@@ -20,7 +20,7 @@ export const Modal = ({ open, children, onClose }: ModalProps) => {
   return (
     <>
       <Backdrop onClose={onClose} />
-      <aside className={styles.modal} style={{ zIndex: zIndex.popover }} onContextMenu={stopPropagation}>
+      <aside className={styles.modal} style={{ zIndex: Z_INDEX.popover }} onContextMenu={stopPropagation}>
         {children}
       </aside>
     </>

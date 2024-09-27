@@ -6,7 +6,7 @@ import { relateItems, updateChildrenAfterParentResize } from './Grid.utils';
 
 import { Item } from '~/components/Item';
 import type { Position, Rectangle, ResizeData } from '~/types/item';
-import { GRID_SIZE } from '~/consts';
+import { GRID_SIZE, ITEM_LEVEL_HEADSTART, MAX_ITEM_Z_INDEX } from '~/consts';
 import { FloatingUI } from '~/components/FloatingUI';
 import { useRemove } from '~/contexts/RemoveItemsContext';
 import { normalizePosition, normalizeSize } from '~/utils/normalize';
@@ -16,7 +16,8 @@ import { getItem } from '~/utils/get-item';
 import { useStorage } from '~/hooks/use-storage';
 import { useToggle } from '~/hooks/use-toggle';
 import { flattenItems } from '~/utils/flatten-items';
-import { useId } from '~/hooks/use-id';
+import { useNextNumber } from '~/hooks/use-next-number';
+import { convertToAbsolutePosition } from '~/utils/convert-to-absolute-position';
 
 export const Grid = () => {
   const storage = useStorage();
@@ -24,7 +25,19 @@ export const Grid = () => {
   const [isAddMode, toggleAddMode] = useToggle(false);
   const previousItems = useRef(items);
   const remove = useRemove();
-  const { getId } = useId(Math.max(...flattenItems(items).map(({ id }) => id)));
+  const [getId] = useNextNumber({
+    initial: Math.max(0, ...flattenItems(items).map(({ id }) => id)),
+    max: MAX_ITEM_Z_INDEX,
+  });
+  const [getLowestLevel, lowestLevel] = useNextNumber({
+    reversed: true,
+    initial: Math.min(MAX_ITEM_Z_INDEX, ...flattenItems(items).map(({ level }) => level)),
+    min: 0,
+  });
+  const [getHighestLevel, highestLevel] = useNextNumber({
+    initial: Math.max(0, ...flattenItems(items).map(({ level }) => level)),
+    max: MAX_ITEM_Z_INDEX,
+  });
 
   const modifyItem = useCallback(
     (itemId: Rectangle['id'], change: Partial<Rectangle>) => {
@@ -59,8 +72,25 @@ export const Grid = () => {
     }
 
     setItems((current) => {
-      const filtered = current.filter(({ id }) => id !== itemId);
-      return storage.setAll(relateItems(where === -1 ? [item, ...filtered] : [...filtered, item]));
+      console.log(lowestLevel, item.level);
+      const alreadyAtBottom = where === -1 && item.level === lowestLevel;
+      const alreadyAtTop = where === 1 && item.level === highestLevel;
+
+      // no change necessary
+      if (alreadyAtTop || alreadyAtBottom) return current;
+
+      const parent = current.find(({ contained }) => contained.map(({ id }) => id).includes(itemId));
+      const filtered = flattenItems<Rectangle>(current, { absolutize: true, withContained: true }).filter(
+        ({ id }) => id !== itemId,
+      );
+      const newLevel = where === -1 ? getLowestLevel() : getHighestLevel();
+
+      const itemWithModifiedLevel = { ...item, level: newLevel };
+      const finalItem: Rectangle = parent
+        ? { ...convertToAbsolutePosition(itemWithModifiedLevel, parent), contained: [] }
+        : itemWithModifiedLevel;
+
+      return storage.setAll(relateItems([...filtered, finalItem]));
     });
   };
 
@@ -127,8 +157,11 @@ export const Grid = () => {
   };
 
   const handleCreateItem = (itemWithoutId: Omit<Rectangle, 'id'>) => {
+    const id = getId();
+
     const normalizedItem: Rectangle = {
-      id: getId(),
+      id,
+      level: ITEM_LEVEL_HEADSTART + id,
       contained: [],
       color: itemWithoutId.color,
       ...normalizePosition(itemWithoutId),
@@ -152,8 +185,8 @@ export const Grid = () => {
         onToggleAddMode={toggleAddMode}
       />
 
-      {items.map((item, index) => (
-        <Item key={item.id} layer={index} {...item} onClick={handleClick} onMove={handleMove} onResize={handleResize} />
+      {items.map((item) => (
+        <Item key={item.id} {...item} onClick={handleClick} onMove={handleMove} onResize={handleResize} />
       ))}
 
       {isAddMode && <CreateItemsOverlay onCreate={handleCreateItem} />}

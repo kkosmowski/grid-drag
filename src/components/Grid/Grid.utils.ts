@@ -17,13 +17,19 @@ const isContaining = (possibleParent: Rectangle, possibleChild: Rectangle): bool
   return pX0 < cX0 && pY0 < cY0 && pX1 > cX1 && pY1 > cY1;
 };
 
+const isBelow = (possibleParent: Rectangle, possibleChild: Rectangle): boolean =>
+  possibleParent.level < possibleChild.level;
+
+const canBeParent = (possibleParent: Rectangle, possibleChild: Rectangle): boolean =>
+  isContaining(possibleParent, possibleChild) && isBelow(possibleParent, possibleChild);
+
 export const relateItems = (items: Rectangle[]): Rectangle[] => {
   let fromTopToBottom = flattenItems<Rectangle>(items, { absolutize: true, withContained: true }).reverse();
 
   for (let i = 0; i < fromTopToBottom.length; i++) {
     const item = fromTopToBottom[i];
 
-    const parentIndex = fromTopToBottom.findIndex((rectangle) => isContaining(rectangle, item));
+    const parentIndex = fromTopToBottom.findIndex((rectangle) => canBeParent(rectangle, item));
 
     if (parentIndex !== -1) {
       const relativeItem = convertToRelativePosition(item, {

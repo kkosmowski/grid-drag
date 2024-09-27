@@ -13,14 +13,13 @@ import { setStyleProp } from '~/utils/set-style-prop';
 import { stopPropagation } from '~/utils/stop-propagation';
 
 type ItemProps = Rectangle & {
-  layer: number;
   parent?: Rectangle;
   onClick?: (id: Rectangle['id']) => void;
   onMove?: (id: Rectangle['id'], position: Position) => void;
   onResize?: (id: Rectangle['id'], data: ResizeData) => void;
 };
 
-export const Item = ({ layer, parent, onClick, onMove, onResize, ...item }: ItemProps) => {
+export const Item = ({ parent, onClick, onMove, onResize, ...item }: ItemProps) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const freezeCursor = useRef(false);
   const remove = useRemove();
@@ -54,12 +53,9 @@ export const Item = ({ layer, parent, onClick, onMove, onResize, ...item }: Item
       width: item.width + 'px',
       height: item.height + 'px',
     });
+    setStyleProp(ref, '--level', item.level);
     setStyleProp(ref, '--color', item.color);
   }, [item]);
-
-  useEffect(() => {
-    setStyleProp(ref, '--layer', layer);
-  }, [layer]);
 
   useEffect(() => {
     setStyle(ref, 'opacity', remove.isSelected(item.id) ? '0.5' : '');
@@ -79,16 +75,8 @@ export const Item = ({ layer, parent, onClick, onMove, onResize, ...item }: Item
         onClick?.(item.id);
       }}
     >
-      {item.contained.map((child, index) => (
-        <Item
-          key={child.id}
-          layer={item.id + index}
-          parent={item}
-          {...child}
-          onMove={onMove}
-          onResize={onResize}
-          onClick={onClick}
-        />
+      {item.contained.map((child) => (
+        <Item key={child.id} parent={item} {...child} onMove={onMove} onResize={onResize} onClick={onClick} />
       ))}
     </div>
   );

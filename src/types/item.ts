@@ -11,6 +11,7 @@ export type FlatRectangle = Size &
   Position & {
     id: number;
     color: string;
+    level: number;
   };
 
 export type Rectangle = FlatRectangle & {
