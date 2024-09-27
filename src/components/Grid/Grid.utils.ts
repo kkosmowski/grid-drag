@@ -1,4 +1,4 @@
-import type { Rectangle } from '~/types/item';
+import type { Rectangle, ResizeData } from '~/types/item';
 import { convertToRelativePosition } from '~/utils/convert-to-relative-position';
 import { flattenItems } from '~/utils/flatten-items';
 
@@ -36,4 +36,26 @@ export const relateItems = (items: Rectangle[]): Rectangle[] => {
   }
 
   return fromTopToBottom.reverse();
+};
+
+export const updateChildrenAfterParentResize = (
+  originalItem: Rectangle | undefined,
+  resizeData: ResizeData,
+): Rectangle[] => {
+  if (!originalItem) return [];
+
+  const parentPositionNotChanged = originalItem.x === resizeData.x && originalItem.y === resizeData.y;
+
+  if (parentPositionNotChanged) {
+    return originalItem.contained;
+  }
+
+  const xDifference = resizeData.x - originalItem.x;
+  const yDifference = resizeData.y - originalItem.y;
+
+  return originalItem.contained.map((child) => ({
+    ...child,
+    x: child.x - xDifference,
+    y: child.y - yDifference,
+  }));
 };

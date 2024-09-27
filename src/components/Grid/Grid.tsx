@@ -2,10 +2,10 @@ import { useCallback, useRef, useState } from 'react';
 
 import styles from './Grid.module.css';
 import { useItemContextMenu } from './hooks/use-item-context-menu';
-import { relateItems } from './Grid.utils';
+import { relateItems, updateChildrenAfterParentResize } from './Grid.utils';
 
 import { Item } from '~/components/Item';
-import type { Position, Rectangle, ResizeData, Size } from '~/types/item';
+import type { Position, Rectangle, ResizeData } from '~/types/item';
 import { GRID_SIZE } from '~/consts';
 import { FloatingUI } from '~/components/FloatingUI';
 import { useRemove } from '~/contexts/RemoveItemsContext';
@@ -92,13 +92,19 @@ export const Grid = () => {
   );
 
   const handleResize = useCallback(
-    (id: Rectangle['id'], { width, height, ...position }: ResizeData) => {
-      const normalizedSize: Size = normalizeSize({ width, height });
-      const normalizedPosition = normalizePosition(position);
+    (itemId: Rectangle['id'], { width, height, ...position }: ResizeData) => {
+      const normalizedResizeData: ResizeData = {
+        ...normalizeSize({ width, height }),
+        ...normalizePosition(position),
+      };
+      const updatedChildren = updateChildrenAfterParentResize(
+        items.find(({ id }) => id === itemId),
+        normalizedResizeData,
+      );
 
-      modifyItem(id, { ...normalizedSize, ...normalizedPosition });
+      modifyItem(itemId, { ...normalizedResizeData, contained: updatedChildren });
     },
-    [modifyItem],
+    [items, modifyItem],
   );
 
   const handleClick = (id: Rectangle['id']) => {
