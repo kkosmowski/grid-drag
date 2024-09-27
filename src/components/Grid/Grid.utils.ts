@@ -23,14 +23,14 @@ export const relateItems = (items: Rectangle[]): Rectangle[] => {
   for (let i = 0; i < fromTopToBottom.length; i++) {
     const item = fromTopToBottom[i];
 
-    const parentIndex = fromTopToBottom.slice(i + 1).findIndex((rectangle) => isContaining(rectangle, item));
+    const parentIndex = fromTopToBottom.findIndex((rectangle) => isContaining(rectangle, item));
 
     if (parentIndex !== -1) {
       const relativeItem = convertToRelativePosition(item, {
-        x: fromTopToBottom[parentIndex + 1].x,
-        y: fromTopToBottom[parentIndex + 1].y,
+        x: fromTopToBottom[parentIndex].x,
+        y: fromTopToBottom[parentIndex].y,
       });
-      fromTopToBottom[parentIndex + 1].contained.push(relativeItem);
+      fromTopToBottom[parentIndex].contained.push(relativeItem);
       fromTopToBottom = fromTopToBottom.slice(0, i).concat(fromTopToBottom.slice(i + 1));
     }
   }
