@@ -136,7 +136,7 @@ export const Grid = () => {
     };
 
     previousItems.current = [...items];
-    setItems(storage.add(normalizedItem));
+    setItems(storage.setAll(relateItems([...items, normalizedItem])));
   };
 
   const removeDisabled = !items.length || isAddMode;
