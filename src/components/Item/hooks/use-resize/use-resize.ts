@@ -70,9 +70,10 @@ export const useResize = ({ ref, item, cursor, onStart, onEnd, onResize }: UseRe
     setStyleProp(ref, '--resize-height', height + 'px');
   };
 
-  const onResizeStart = (event: MouseEvent) => {
-    event.stopPropagation();
-    if (!canBeResized || event.target !== ref.current) return;
+  const onResizeStart = ({ button, target }: MouseEvent) => {
+    if (target !== ref.current) return;
+    if (button !== 0) return; // handle LMB only
+    if (!canBeResized) return;
 
     if (isResizing.current) {
       clear();
