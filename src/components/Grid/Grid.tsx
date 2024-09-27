@@ -15,6 +15,8 @@ import { ContextMenu } from '~/components/ContextMenu';
 import { getItem } from '~/utils/get-item';
 import { useStorage } from '~/hooks/use-storage';
 import { useToggle } from '~/hooks/use-toggle';
+import { flattenItems } from '~/utils/flatten-items';
+import { useId } from '~/hooks/use-id';
 
 export const Grid = () => {
   const storage = useStorage();
@@ -22,6 +24,7 @@ export const Grid = () => {
   const [isAddMode, toggleAddMode] = useToggle(false);
   const previousItems = useRef(items);
   const remove = useRemove();
+  const { getId } = useId(Math.max(...flattenItems(items).map(({ id }) => id)));
 
   const modifyItem = useCallback(
     (itemId: Rectangle['id'], change: Partial<Rectangle>) => {
@@ -115,7 +118,7 @@ export const Grid = () => {
 
   const handleCreateItem = (itemWithoutId: Omit<Rectangle, 'id'>) => {
     const normalizedItem: Rectangle = {
-      id: items.length,
+      id: getId(),
       contained: [],
       color: itemWithoutId.color,
       ...normalizePosition(itemWithoutId),

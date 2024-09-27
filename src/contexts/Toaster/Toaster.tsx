@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react';
-import { createContext, useCallback, useRef, useState } from 'react';
+import { createContext, useCallback, useState } from 'react';
 
 import styles from './Toaster.module.css';
 
 import { Toast } from '~/components/Toast';
+import { useId } from '~/hooks/use-id';
 
 type ToasterContextState = {
   toast: (content: ReactNode, options?: ToastOptions) => ToastData['id'];
@@ -38,9 +39,7 @@ const HIDING_DURATION = 200;
 
 export const Toaster = ({ children }: ToasterProps) => {
   const [queue, setQueue] = useState<ToastData[]>([]);
-  const idPool = useRef(0);
-
-  const getId = () => idPool.current++;
+  const { getId } = useId();
 
   const hideToast = useCallback((id: ToastData['id']) => {
     setQueue((toasts) => toasts.map((toast) => (toast.id === id ? { ...toast, hiding: true } : toast)));

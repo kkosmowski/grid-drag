@@ -89,7 +89,6 @@ export const useResize = ({ ref, item, parent, cursor, onStart, onEnd, onResize 
 
         setStyleProp(ref, '--resize', 'block');
         setStyle(ref, 'zIndex', zIndex.draggedItem);
-        console.log({ x: 0, y: 0, width, height });
         setResize({ x: 0, y: 0, width, height });
       }
     }, HOLD_TIME_MS);
