@@ -12,13 +12,14 @@ import { getNewPosition } from '~/utils/get-new-position';
 type UseResizeProps = {
   ref: ItemRef;
   item: Rectangle;
+  parent?: Rectangle;
   cursor: Cursor | null;
   onStart: VoidFunction;
   onEnd: VoidFunction;
   onResize: (id: Rectangle['id'], data: ResizeData) => void;
 };
 
-export const useResize = ({ ref, item, cursor, onStart, onEnd, onResize }: UseResizeProps) => {
+export const useResize = ({ ref, item, parent, cursor, onStart, onEnd, onResize }: UseResizeProps) => {
   const [isShiftPressed, setIsShiftPressed] = useState(false);
   const settings = useSettings();
   const canBeResized = cursor !== null;
@@ -88,6 +89,7 @@ export const useResize = ({ ref, item, cursor, onStart, onEnd, onResize }: UseRe
 
         setStyleProp(ref, '--resize', 'block');
         setStyle(ref, 'zIndex', zIndex.draggedItem);
+        console.log({ x: 0, y: 0, width, height });
         setResize({ x: 0, y: 0, width, height });
       }
     }, HOLD_TIME_MS);
@@ -95,14 +97,20 @@ export const useResize = ({ ref, item, cursor, onStart, onEnd, onResize }: UseRe
 
   const onResizeDrag = ({ clientX, clientY }: MouseEvent) => {
     if (isResizing.current && cursor) {
-      const { x, y } = getNewPosition(clientX, clientY, settings.isPreviewSnapped);
+      const realX = clientX - (parent?.x ?? 0);
+      const realY = clientY - (parent?.y ?? 0);
+      const { x, y } = getNewPosition(realX, realY, settings.isPreviewSnapped);
+
       setResize(resizeMap(x, y, isShiftPressed)[cursor]);
     }
   };
 
   const onResizeEnd = ({ clientX, clientY }: MouseEvent) => {
     if (isResizing.current && cursor) {
-      const relativeResizeData = resizeMap(clientX, clientY, isShiftPressed)[cursor];
+      const realX = clientX - (parent?.x ?? 0);
+      const realY = clientY - (parent?.y ?? 0);
+      const relativeResizeData = resizeMap(realX, realY, isShiftPressed)[cursor];
+
       // resize map contains position of pseudo element (relative to item), but absolute position must be passed to grid
       const absoluteResizeData: ResizeData = {
         x: relativeResizeData.x + item.x,
