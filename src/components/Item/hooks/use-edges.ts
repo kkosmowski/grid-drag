@@ -51,9 +51,10 @@ export const useEdges = ({ ref, item, parent, freezeCursor }: UseEdgesProps) => 
 
   const edgeListener = useCallback(
     (event: MouseEvent) => {
+      if (event.target !== ref.current) return;
       debouncedEdgeListener(event);
     },
-    [debouncedEdgeListener],
+    [debouncedEdgeListener, ref],
   );
 
   const resetCursor = useCallback(() => {
