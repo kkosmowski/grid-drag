@@ -6,6 +6,7 @@
     --resize-height: 0px;
     --color: none;
     --layer: 0;
+    --shadow: none;
     position: absolute;
     z-index: var(--layer);
     border-radius: 5px;
