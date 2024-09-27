@@ -71,8 +71,18 @@ export const Grid = () => {
   });
 
   const handleRemoveItems = () => {
-    const newItems = relateItems(items.filter(({ id }) => remove.items.includes(id)));
-    setItems(storage.setAll(newItems));
+    // try to remove level 0 item (parent-less item)
+    let newItems = items.filter(({ id }) => !remove.items.includes(id));
+
+    // if parent-less item removed, find the child
+    if (newItems.length === items.length) {
+      newItems = items.map((item) => ({
+        ...item,
+        contained: item.contained.filter(({ id }) => !remove.items.includes(id)),
+      }));
+    }
+
+    setItems(storage.setAll(relateItems(newItems)));
     remove.onAfterRemove();
   };
 
