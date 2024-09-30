@@ -6,7 +6,7 @@ import { relateItems, updateChildrenAfterParentResize } from './Grid.utils';
 
 import { Item } from '~/components/Item';
 import type { Position, Rectangle, ResizeData } from '~/types/item';
-import { GRID_SIZE, ITEM_LEVEL_HEADSTART, MAX_ITEM_Z_INDEX } from '~/consts';
+import { GRID_SIZE, MAX_ITEM_Z_INDEX } from '~/consts';
 import { FloatingUI } from '~/components/FloatingUI';
 import { useRemove } from '~/contexts/RemoveItemsContext';
 import { normalizePosition, normalizeSize } from '~/utils/normalize';
@@ -72,7 +72,6 @@ export const Grid = () => {
     }
 
     setItems((current) => {
-      console.log(lowestLevel, item.level);
       const alreadyAtBottom = where === -1 && item.level === lowestLevel;
       const alreadyAtTop = where === 1 && item.level === highestLevel;
 
@@ -161,7 +160,7 @@ export const Grid = () => {
 
     const normalizedItem: Rectangle = {
       id,
-      level: ITEM_LEVEL_HEADSTART + id,
+      level: getHighestLevel(),
       contained: [],
       color: itemWithoutId.color,
       ...normalizePosition(itemWithoutId),

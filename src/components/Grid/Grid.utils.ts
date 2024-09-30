@@ -36,8 +36,13 @@ export const relateItems = (items: Rectangle[]): Rectangle[] => {
         x: fromTopToBottom[parentIndex].x,
         y: fromTopToBottom[parentIndex].y,
       });
+
+      // add current item to parent
       fromTopToBottom[parentIndex].contained.push(relativeItem);
+      // remove current item from main array
       fromTopToBottom = fromTopToBottom.slice(0, i).concat(fromTopToBottom.slice(i + 1));
+      // main array size was reduced by current item, so d
+      i--;
     }
   }
 
