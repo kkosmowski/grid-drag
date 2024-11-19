@@ -5,13 +5,14 @@ import { constrainToBoard } from './use-move.utils';
 import type { Cursor, ItemRef, Position, Rectangle } from '~/types/item';
 import { setStyle } from '~/utils/set-style';
 import { setStyleProp } from '~/utils/set-style-prop';
-import { HOLD_TIME_MS, zIndex } from '~/consts';
+import { HOLD_TIME_MS, Z_INDEX } from '~/consts';
 import { useSettings } from '~/hooks/use-settings';
 import { getNewPosition } from '~/utils/get-new-position';
 
 type UseMoveProps = {
   ref: ItemRef;
   item: Rectangle;
+  parent?: Rectangle;
   cursor: Cursor | null;
   onStart: VoidFunction;
   onEnd: VoidFunction;
@@ -20,7 +21,7 @@ type UseMoveProps = {
 
 const defaultInnerPosition: Position = { x: 0, y: 0 };
 
-export const useMove = ({ ref, item, cursor, onStart, onEnd, onMove }: UseMoveProps) => {
+export const useMove = ({ ref, item, parent, cursor, onStart, onEnd, onMove }: UseMoveProps) => {
   const settings = useSettings();
   const canBeMoved = cursor === null;
   const isDragging = useRef(false);
@@ -44,7 +45,8 @@ export const useMove = ({ ref, item, cursor, onStart, onEnd, onMove }: UseMovePr
     }
   };
 
-  const onDragStart = ({ button, clientX, clientY }: MouseEvent) => {
+  const onDragStart = ({ button, clientX, clientY, target }: MouseEvent) => {
+    if (target !== ref.current) return;
     if (button !== 0) return; // handle LMB only
     if (!canBeMoved) return;
 
@@ -62,7 +64,7 @@ export const useMove = ({ ref, item, cursor, onStart, onEnd, onMove }: UseMovePr
 
       if (ref.current) {
         setStyleProp(ref, '--shadow', '0 0 8px 1px #0004');
-        setStyle(ref, 'zIndex', zIndex.temporaryItem);
+        setStyle(ref, 'zIndex', Z_INDEX.temporaryItem);
         setStyle(ref, 'cursor', 'move');
       }
     }, HOLD_TIME_MS);
@@ -76,7 +78,7 @@ export const useMove = ({ ref, item, cursor, onStart, onEnd, onMove }: UseMovePr
         settings.isPreviewSnapped,
       );
 
-      const { x, y } = constrainToBoard(initialPosition, item);
+      const { x, y } = constrainToBoard(initialPosition, item, parent);
 
       setStyle(ref, 'left', x + 'px');
       setStyle(ref, 'top', y + 'px');
@@ -89,7 +91,7 @@ export const useMove = ({ ref, item, cursor, onStart, onEnd, onMove }: UseMovePr
         clientY - innerPosition.current.y,
         settings.isPreviewSnapped,
       );
-      const { x, y } = constrainToBoard(initialPosition, item);
+      const { x, y } = constrainToBoard(initialPosition, item, parent);
 
       onMove(item.id, { x, y });
       onEnd();

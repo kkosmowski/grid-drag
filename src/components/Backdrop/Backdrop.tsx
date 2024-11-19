@@ -1,6 +1,6 @@
 import styles from './Backdrop.module.css';
 
-import { zIndex } from '~/consts';
+import { Z_INDEX } from '~/consts';
 import { stopPropagation } from '~/utils/stop-propagation';
 
 export type BackdropProps = {
@@ -10,7 +10,7 @@ export type BackdropProps = {
 export const Backdrop = ({ onClose }: BackdropProps) => (
   <div
     className={`${styles.backdrop} ${onClose ? styles.closable : ''}`}
-    style={{ zIndex: zIndex.backdrop }}
+    style={{ zIndex: Z_INDEX.backdrop }}
     onClick={() => onClose?.()}
     onContextMenu={stopPropagation}
   />

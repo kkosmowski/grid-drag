@@ -7,11 +7,16 @@ export type TemporaryRectangle = {
   y1: number;
 };
 
-export type Rectangle = Size &
+export type FlatRectangle = Size &
   Position & {
     id: number;
     color: string;
+    level: number;
   };
+
+export type Rectangle = FlatRectangle & {
+  contained: Rectangle[];
+};
 
 export type Size = {
   width: number;
@@ -56,3 +61,5 @@ export enum EdgeCursor {
 export type Cursor = CornerCursor | EdgeCursor;
 
 export type ItemRef = MutableRefObject<HTMLDivElement | null>;
+
+export type MapperFn = (items: Rectangle[]) => Rectangle[];

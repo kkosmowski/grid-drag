@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 
 import styles from './Menu.module.css';
 
-import { MENU_ITEM_HEIGHT, MENU_WIDTH, zIndex } from '~/consts';
+import { MENU_ITEM_HEIGHT, MENU_WIDTH, Z_INDEX } from '~/consts';
 import { Backdrop } from '~/components/Backdrop';
 import type { MenuItem } from '~/types/ui';
 import type { Position } from '~/types/item';
@@ -37,7 +37,7 @@ export const Menu = ({ open, options, openAt, button, position, onOpen, onClose,
 
   const finalStyle = {
     ...style,
-    zIndex: zIndex.popover,
+    zIndex: Z_INDEX.popover,
     width: MENU_WIDTH,
     '--menu-item-height': `${MENU_ITEM_HEIGHT}px`,
   };

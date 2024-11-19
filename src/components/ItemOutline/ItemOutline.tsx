@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import styles from './ItemOutline.module.css';
 
 import type { TemporaryRectangle } from '~/types/item';
-import { zIndex } from '~/consts';
+import { Z_INDEX } from '~/consts';
 import { mapOutlineToRectangle } from '~/utils/map-outline-to-rectangle';
 
 type ItemOutlineProps = TemporaryRectangle;
@@ -15,7 +15,7 @@ export const ItemOutline = (temp: ItemOutlineProps) => {
   const { x, y, width, height } = mapOutlineToRectangle(temp);
 
   const outlineStyle: CSSProperties = {
-    zIndex: zIndex.temporaryItem,
+    zIndex: Z_INDEX.temporaryItem,
     top: y,
     left: x,
     width,

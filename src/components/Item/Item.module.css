@@ -5,9 +5,10 @@
     --resize-width: 0px;
     --resize-height: 0px;
     --color: none;
-    --layer: 0;
+    --level: 0;
+    --shadow: none;
     position: absolute;
-    z-index: var(--layer);
+    z-index: var(--level);
     border-radius: 5px;
     cursor: move;
     box-shadow: var(--shadow);

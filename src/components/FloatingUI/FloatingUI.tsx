@@ -6,7 +6,7 @@ import { useRemove } from '~/contexts/RemoveItemsContext';
 import { useToast } from '~/hooks/use-toast';
 import type { ToastData } from '~/contexts/Toaster';
 import { stopPropagation } from '~/utils/stop-propagation';
-import { zIndex } from '~/consts';
+import { Z_INDEX } from '~/consts';
 import { useSettings } from '~/hooks/use-settings';
 import { Menu } from '~/components/Menu';
 import { useToggle } from '~/hooks/use-toggle';
@@ -44,7 +44,7 @@ export const FloatingUI = (props: FloatingUIProps) => {
   };
 
   return (
-    <header className={styles.header} style={{ zIndex: zIndex.ui }} onClick={stopPropagation}>
+    <header className={styles.header} style={{ zIndex: Z_INDEX.ui }} onClick={stopPropagation}>
       <CreateButton isAddMode={isAddMode} disabled={remove.isOn} onToggle={toggleAddingItems} />
       <RemoveButton remove={remove} disabled={removeDisabled} onRemove={onRemoveItems} />
       <RemoveAllButton remove={remove} disabled={removeDisabled} onRemoveAll={onRemoveAll} onUndo={onUndoRemoveAll} />

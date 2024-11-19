@@ -1,5 +1,3 @@
-import type { Rectangle } from '~/types/item';
-
 export const GRID_SIZE = 10;
 
 export const EDGE_SIZE = 8;
@@ -15,14 +13,15 @@ export const MENU_WIDTH = 160;
 export const MENU_MARGIN = 10; // additional spacing to avoid menu right next to window's edge
 export const MENU_ITEM_HEIGHT = 32;
 
-const maxZIndex = 100000;
+export const ITEM_LEVEL_HEADSTART = 40000;
 
-export const zIndex = {
-  item: (id: Rectangle['id']) => Math.min(id, maxZIndex),
-  temporaryItem: maxZIndex - 101,
-  draggedItem: maxZIndex - 100,
-  createOverlay: maxZIndex - 11,
-  ui: maxZIndex - 10,
-  backdrop: maxZIndex - 1,
-  popover: maxZIndex,
+export const MAX_ITEM_Z_INDEX = 100000;
+
+export const Z_INDEX = {
+  temporaryItem: MAX_ITEM_Z_INDEX + 10,
+  draggedItem: MAX_ITEM_Z_INDEX + 11,
+  createOverlay: MAX_ITEM_Z_INDEX + 100,
+  ui: MAX_ITEM_Z_INDEX + 1000,
+  backdrop: MAX_ITEM_Z_INDEX + 1100,
+  popover: MAX_ITEM_Z_INDEX + 1200,
 };
